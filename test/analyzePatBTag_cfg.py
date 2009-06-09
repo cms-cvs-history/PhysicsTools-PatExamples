@@ -1,12 +1,8 @@
-#
-
 import FWCore.ParameterSet.Config as cms
 
 from PhysicsTools.PatUtils.bJetOperatingPointsParameters_cfi import *
 
-process = cms.Process("BTagPATAnalyzer")
-
-#process.load("Analyzers.BTagPAT.selectedLooseBJets_cff")
+process = cms.Process("PatBTagAnalyzer")
 
 process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:PATLayer1_Output.fromAOD_full_ttbar.root')
@@ -42,7 +38,7 @@ process.options = cms.untracked.PSet(
 )
 
 
-process.BTagPATAnalyzerTC2 = cms.EDAnalyzer("BTagPATAnalyzer",
+process.PatBTagAnalyzerTC2 = cms.EDAnalyzer("PatBTagAnalyzer",
     BJetOperatingPointsParameters,
     jetTag = cms.untracked.InputTag("selectedLayer1Jets"),
     BjetTag = cms.PSet(
@@ -56,7 +52,7 @@ process.BTagPATAnalyzerTC2 = cms.EDAnalyzer("BTagPATAnalyzer",
 )
 
 
-process.BTagPATAnalyzerTC3 = cms.EDAnalyzer("BTagPATAnalyzer",
+process.PatBTagAnalyzerTC3 = cms.EDAnalyzer("PatBTagAnalyzer",
     BJetOperatingPointsParameters,
     jetTag = cms.untracked.InputTag("selectedLayer1Jets"),
     BjetTag = cms.PSet(
@@ -69,7 +65,7 @@ process.BTagPATAnalyzerTC3 = cms.EDAnalyzer("BTagPATAnalyzer",
     )
 )
 
-process.BTagPATAnalyzerTP = cms.EDAnalyzer("BTagPATAnalyzer",
+process.PatBTagAnalyzerTP = cms.EDAnalyzer("PatBTagAnalyzer",
     BJetOperatingPointsParameters,
     jetTag = cms.untracked.InputTag("selectedLayer1Jets"),
     BjetTag = cms.PSet(
@@ -82,7 +78,7 @@ process.BTagPATAnalyzerTP = cms.EDAnalyzer("BTagPATAnalyzer",
     )
 )
 
-process.BTagPATAnalyzerBTP = cms.EDAnalyzer("BTagPATAnalyzer",
+process.PatBTagAnalyzerBTP = cms.EDAnalyzer("PatBTagAnalyzer",
     BJetOperatingPointsParameters,
     jetTag = cms.untracked.InputTag("selectedLayer1Jets"),
     BjetTag = cms.PSet(
@@ -94,7 +90,7 @@ process.BTagPATAnalyzerBTP = cms.EDAnalyzer("BTagPATAnalyzer",
         mindiscriminatorcut = cms.untracked.double(-0.1)
     )
 )
-process.BTagPATAnalyzerSSV = cms.EDAnalyzer("BTagPATAnalyzer",
+process.PatBTagAnalyzerSSV = cms.EDAnalyzer("PatBTagAnalyzer",
     BJetOperatingPointsParameters,
     jetTag = cms.untracked.InputTag("selectedLayer1Jets"),
     BjetTag = cms.PSet(
@@ -107,7 +103,7 @@ process.BTagPATAnalyzerSSV = cms.EDAnalyzer("BTagPATAnalyzer",
     )
 )
 
-process.BTagPATAnalyzerCSV = cms.EDAnalyzer("BTagPATAnalyzer",
+process.PatBTagAnalyzerCSV = cms.EDAnalyzer("PatBTagAnalyzer",
     BJetOperatingPointsParameters,
    jetTag = cms.untracked.InputTag("selectedLayer1Jets"),
     BjetTag = cms.PSet(
@@ -120,7 +116,7 @@ process.BTagPATAnalyzerCSV = cms.EDAnalyzer("BTagPATAnalyzer",
     )
 )
 
-process.BTagPATAnalyzerMSV = cms.EDAnalyzer("BTagPATAnalyzer",
+process.PatBTagAnalyzerMSV = cms.EDAnalyzer("PatBTagAnalyzer",
     BJetOperatingPointsParameters,
     jetTag = cms.untracked.InputTag("selectedLayer1Jets"),
     BjetTag = cms.PSet(
@@ -133,7 +129,7 @@ process.BTagPATAnalyzerMSV = cms.EDAnalyzer("BTagPATAnalyzer",
     )
 )
 
-process.BTagPATAnalyzerIPM = cms.EDAnalyzer("BTagPATAnalyzer",
+process.PatBTagAnalyzerIPM = cms.EDAnalyzer("PatBTagAnalyzer",
     BJetOperatingPointsParameters,
     jetTag = cms.untracked.InputTag("selectedLayer1Jets"),
     BjetTag = cms.PSet(
@@ -146,7 +142,7 @@ process.BTagPATAnalyzerIPM = cms.EDAnalyzer("BTagPATAnalyzer",
     )
 )
 
-process.BTagPATAnalyzerSET = cms.EDAnalyzer("BTagPATAnalyzer",
+process.PatBTagAnalyzerSET = cms.EDAnalyzer("PatBTagAnalyzer",
     BJetOperatingPointsParameters,
     jetTag = cms.untracked.InputTag("selectedLayer1Jets"),
     BjetTag = cms.PSet(
@@ -159,7 +155,7 @@ process.BTagPATAnalyzerSET = cms.EDAnalyzer("BTagPATAnalyzer",
     )
 )
 
-process.BTagPATAnalyzerSMT = cms.EDAnalyzer("BTagPATAnalyzer",
+process.PatBTagAnalyzerSMT = cms.EDAnalyzer("PatBTagAnalyzer",
     BJetOperatingPointsParameters,
     jetTag = cms.untracked.InputTag("selectedLayer1Jets"),
     BjetTag = cms.PSet(
@@ -172,7 +168,7 @@ process.BTagPATAnalyzerSMT = cms.EDAnalyzer("BTagPATAnalyzer",
     )
 )
 
-process.BTagPATAnalyzerSMNIPT = cms.EDAnalyzer("BTagPATAnalyzer",
+process.PatBTagAnalyzerSMNIPT = cms.EDAnalyzer("PatBTagAnalyzer",
     BJetOperatingPointsParameters,
     jetTag = cms.untracked.InputTag("selectedLayer1Jets"),
     BjetTag = cms.PSet(
@@ -187,21 +183,18 @@ process.BTagPATAnalyzerSMNIPT = cms.EDAnalyzer("BTagPATAnalyzer",
 
 
 process.p = cms.Path(
-
-    process.patLayer0
-    *process.patLayer1
-    *process.BTagPATAnalyzerTC2
-    *process.BTagPATAnalyzerTC3
-    *process.BTagPATAnalyzerBTP
-    *process.BTagPATAnalyzerSSV
-    *process.BTagPATAnalyzerCSV
-    *process.BTagPATAnalyzerMSV
-    *process.BTagPATAnalyzerIPM
-    *process.BTagPATAnalyzerSET
-    *process.BTagPATAnalyzerSMT
-    *process.BTagPATAnalyzerSMNIPT
-    *process.BTagPATAnalyzerTP
-
- 
-)
+    process.patLayer0 *
+    process.patLayer1 *
+    process.PatBTagAnalyzerTC2 *
+    process.PatBTagAnalyzerTC3 *
+    process.PatBTagAnalyzerBTP *
+    process.PatBTagAnalyzerSSV *
+    process.PatBTagAnalyzerCSV *
+    process.PatBTagAnalyzerMSV *
+    process.PatBTagAnalyzerIPM *
+    process.PatBTagAnalyzerSET *
+    process.PatBTagAnalyzerSMT *
+    process.PatBTagAnalyzerSMNIPT *
+    process.PatBTagAnalyzerTP
+    )
 
