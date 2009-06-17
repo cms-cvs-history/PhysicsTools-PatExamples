@@ -7,4 +7,5 @@
 
 <environment>
  <bin file="PatBasicFWLiteAnalyzer.cc"> </bin>
+ <bin file="PatMcMatchFWLiteAnalyzer.cc"> </bin>
 </environment>
