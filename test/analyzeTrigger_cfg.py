@@ -8,8 +8,8 @@ process.options = cms.untracked.PSet(
 )
 
 process.source = cms.Source( "PoolSource",
-    fileNames = cms.untracked.vstring( 'file:/afs/naf.desy.de/user/v/vadler/public/edmTrigger.root' )
-#     fileNames = cms.untracked.vstring( 'file:edmTrigger.root' )
+#     fileNames = cms.untracked.vstring( 'file:/afs/naf.desy.de/user/v/vadler/public/edmTrigger.root' )
+    fileNames = cms.untracked.vstring( 'file:edmTrigger.root' )
 )
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32( -1 )
