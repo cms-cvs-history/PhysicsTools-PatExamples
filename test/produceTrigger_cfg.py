@@ -67,13 +67,13 @@ process.outpath = cms.EndPath(
 ### PAT trigger ###
 # The new matcher module to be completed
 process.muonTriggerMatchHLTMuons = cms.EDFilter( "PATTriggerMatcherDRLessByR",
-    src     = cms.InputTag(  ),             # <== missing piece
+    src     = cms.InputTag( "selectedLayer1Muons" ),             # <== missing piece
     matched = cms.InputTag( "patTrigger" ),
     andOr          = cms.bool( False ),
-    filterIdsEnum  = cms.vstring(  ),       # <== missing piece
-    filterIds      = cms.vuint32(  ),       # <== missing piece
+    filterIdsEnum  = cms.vstring( 'TriggerMuon' ),       # <== missing piece
+    filterIds      = cms.vuint32( 93 ),       # <== missing piece
     filterLabels   = cms.vstring( '*' ),
-    pathNames      = cms.vstring(  ),       # <== missing piece
+    pathNames      = cms.vstring( 'HLT_Mu3' ),       # <== missing piece
     collectionTags = cms.vstring( '*' ),
     maxDPtRel = cms.double( 0.5 ),
     maxDeltaR = cms.double( 0.5 ),
@@ -87,3 +87,5 @@ process.patTriggerMatcher.remove( process.patTriggerElectronMatcher )
 process.patTriggerMatcher.remove( process.patTriggerMuonMatcher )
 process.patTriggerMatcher.remove( process.patTriggerTauMatcher )
 # Here is something left to be done (PAT trigger event & Python tool):
+process.patTriggerEvent.patTriggerMatches = [ "muonTriggerMatchHLTMuons" ]
+switchOnTrigger( process )
