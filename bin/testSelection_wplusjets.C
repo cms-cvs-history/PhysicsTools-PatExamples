@@ -91,5 +91,8 @@ int main ( int argc, char ** argv )
   wPlusJets->print(std::cout);
 
   cout << "We're done!" << endl;
+
+  file->Close();
+  delete file;
   return 0;
 }
