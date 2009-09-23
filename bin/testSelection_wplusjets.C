@@ -13,7 +13,6 @@ This example creates a histogram of Jet Pt, using Jets with Pt above 30 and ETA 
 
 
 #if !defined(__CINT__) && !defined(__MAKECINT__)
-#include "DataFormats/PatCandidates/interface/Jet.h"
 #include "PhysicsTools/PatExamples/interface/WPlusJetsEventSelector.h"
 #endif
 
@@ -49,10 +48,6 @@ int main ( int argc, char ** argv )
   cout << "Making event selector" << endl;
   boost::shared_ptr<WPlusJetsEventSelector> 
     wPlusJets( new WPlusJetsEventSelector( 
-     edm::InputTag("cleanLayer1Muons"),
-     edm::InputTag("cleanLayer1Electrons"),
-     edm::InputTag("cleanLayer1Jets"),
-     edm::InputTag("layer1METs"),
      muonIdTight,
      electronIdTight,
      jetIdTight,
@@ -73,19 +68,50 @@ int main ( int argc, char ** argv )
          ! ev.atEnd();
        ++ev, ++count) {
 
+
+    fwlite::Handle<std::vector<pat::Jet> > allJets;
+    allJets.getByLabel(ev,"cleanLayer1Jets");
+    if (!allJets.isValid() ) continue;
+
+    fwlite::Handle<std::vector<pat::MET> > allMETs;
+    allMETs.getByLabel(ev,"layer1METs");
+    if (!allMETs.isValid() ) continue;
+
+    fwlite::Handle<std::vector<pat::Muon> > allMuons;
+    allMuons.getByLabel(ev,"cleanLayer1Muons");
+    if (!allMuons.isValid() ) continue;
+
+    fwlite::Handle<std::vector<pat::Electron> > allElectrons;
+    allElectrons.getByLabel(ev,"cleanLayer1Electrons");
+    if (!allElectrons.isValid() ) continue;
+
+    fwlite::Handle<std::vector<pat::Tau> > allTaus;
+    allTaus.getByLabel(ev,"cleanLayer1Taus");
+    if (!allTaus.isValid() ) continue;
+
+    fwlite::Handle<std::vector<pat::Photon> > allPhotons;
+    allPhotons.getByLabel(ev,"cleanLayer1Photons");
+    if (!allPhotons.isValid() ) continue;
+
+    pat::PatSummaryEvent summary;
+    summary.jets      = *allJets;
+    summary.METs      = *allMETs;
+    summary.electrons = *allElectrons;
+    summary.muons     = *allMuons;
+    summary.taus      = *allTaus;
+    summary.photons   = *allPhotons;
+
  
     std::strbitset ret = wPlusJets->getBitTemplate();
 
 
-    bool passed = (*wPlusJets)(ev, ret);
+    bool passed = (*wPlusJets)(summary, ret);
     vector<pat::Electron> const & electrons = wPlusJets->selectedElectrons();
     vector<pat::Muon>     const & muons     = wPlusJets->selectedMuons();
 
-    cout << "Nele = " << electrons.size() << endl;
-    cout << "Nmuo = " << muons.size() << endl;
+    vector<pat::Jet> const & jets = wPlusJets->selectedJets();
+
     if ( passed ) {
-      
-      vector<pat::Jet> const & jets = wPlusJets->selectedJets();
       for ( vector<pat::Jet>::const_iterator jetsBegin = jets.begin(),
 	      jetsEnd = jets.end(), ijet = jetsBegin; 
 	    ijet != jetsEnd; ++ijet) {

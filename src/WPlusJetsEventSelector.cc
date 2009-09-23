@@ -6,10 +6,6 @@
 using namespace std;
 
 WPlusJetsEventSelector::WPlusJetsEventSelector( 
-    edm::InputTag const & muSrc, 
-    edm::InputTag const & eleSrc,
-    edm::InputTag const & jetSrc,
-    edm::InputTag const & metSrc,
     boost::shared_ptr<MuonVPlusJetsIDSelectionFunctor> & muonIdTight,
     boost::shared_ptr<ElectronVPlusJetsIDSelectionFunctor> & electronIdTight,
     boost::shared_ptr<JetIDSelectionFunctor> & jetIdTight,
@@ -20,7 +16,6 @@ WPlusJetsEventSelector::WPlusJetsEventSelector(
     double elePtMin ,
     double jetPtMin
 						) :
-  muSrc_( muSrc ), eleSrc_(eleSrc), jetSrc_(jetSrc), metSrc_(metSrc),
   muonIdTight_(muonIdTight),
   electronIdTight_(electronIdTight),
   jetIdTight_(jetIdTight),
@@ -43,7 +38,7 @@ WPlusJetsEventSelector::WPlusJetsEventSelector(
   push_back( "Cosmic Veto"    );
 }
 
-bool WPlusJetsEventSelector::operator() (edm::EventBase const & t, std::strbitset & ret)
+bool WPlusJetsEventSelector::operator() ( pat::PatSummaryEvent const & t, std::strbitset & ret)
 {
   selectedJets_.clear();
   selectedMuons_.clear();
@@ -51,24 +46,9 @@ bool WPlusJetsEventSelector::operator() (edm::EventBase const & t, std::strbitse
   selectedMETs_.clear();
 
   passCut( ret, "Inclusive");
-  edm::Handle< std::vector<pat::Jet> >       allJets;
-  edm::Handle< std::vector<pat::Muon> >      allMuons;
-  edm::Handle< std::vector<pat::Electron> >  allElectrons;
-  edm::Handle< std::vector<pat::MET> >       allMETs;
 
-  bool foundJets = t.getByLabel<std::vector<pat::Jet> >( jetSrc_, allJets);
-  bool foundMuons = t.getByLabel<std::vector<pat::Muon> >( muSrc_, allMuons);
-  bool foundElectrons = t.getByLabel<std::vector<pat::Electron> >( eleSrc_, allElectrons);
-  bool foundMET = t.getByLabel<std::vector<pat::MET> >( metSrc_, allMETs);
-
-  if ( !foundJets || !foundMuons || !foundElectrons || !foundMET ||
-       !allJets.isValid() || !allMuons.isValid() || !allElectrons.isValid() || !allMETs.isValid() ) {
-    std::cout << "unable to find collections" << std::endl;
-    return false;
-  }
-
-  for ( std::vector<pat::Muon>::const_iterator muonBegin = allMuons->begin(),
-	  muonEnd = allMuons->end(), imuon = muonBegin;
+  for ( std::vector<pat::Muon>::const_iterator muonBegin = t.muons.begin(),
+	  muonEnd = t.muons.end(), imuon = muonBegin;
 	imuon != muonEnd; ++imuon ) {
     std::strbitset iret = muonIdTight_->getBitTemplate();
     if ( imuon->pt() > muPtMin_ && (*muonIdTight_)(*imuon, iret) ) {
@@ -76,8 +56,8 @@ bool WPlusJetsEventSelector::operator() (edm::EventBase const & t, std::strbitse
     }
   }
 
-  for ( std::vector<pat::Electron>::const_iterator electronBegin = allElectrons->begin(),
-	  electronEnd = allElectrons->end(), ielectron = electronBegin;
+  for ( std::vector<pat::Electron>::const_iterator electronBegin = t.electrons.begin(),
+	  electronEnd = t.electrons.end(), ielectron = electronBegin;
 	ielectron != electronEnd; ++ielectron ) {
     std::strbitset iret = electronIdTight_->getBitTemplate();
     if ( ielectron->pt() > elePtMin_ && (*electronIdTight_)(*ielectron, iret) ) {
@@ -85,8 +65,8 @@ bool WPlusJetsEventSelector::operator() (edm::EventBase const & t, std::strbitse
     }
   }
 
-  for ( std::vector<pat::Jet>::const_iterator jetBegin = allJets->begin(),
-	  jetEnd = allJets->end(), ijet = jetBegin;
+  for ( std::vector<pat::Jet>::const_iterator jetBegin = t.jets.begin(),
+	  jetEnd = t.jets.end(), ijet = jetBegin;
 	ijet != jetEnd; ++ijet ) {
     std::strbitset iret = jetIdTight_->getBitTemplate();
     if ( ijet->pt() > jetPtMin_ && (*jetIdTight_)(*ijet, iret) ) {

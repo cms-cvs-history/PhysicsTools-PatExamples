@@ -1,7 +1,7 @@
 #ifndef PhysicsTools_PatExamples_interface_WPlusJetsEventSelector_h
 #define PhysicsTools_PatExamples_interface_WPlusJetsEventSelector_h
 
-#include "PhysicsTools/Utilities/interface/EventSelector.h"
+#include "PhysicsTools/PatUtils/interface/PatEventSelector.h"
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
@@ -11,13 +11,9 @@
 #include "PhysicsTools/PatUtils/interface/MuonVPlusJetsIDSelectionFunctor.h"
 #include "PhysicsTools/PatUtils/interface/JetIDSelectionFunctor.h"
 
-class WPlusJetsEventSelector : public EventSelector {
+class WPlusJetsEventSelector : public pat::PatEventSelector {
  public:
   WPlusJetsEventSelector( 
-   edm::InputTag const & muSrc, 
-   edm::InputTag const & eleSrc,
-   edm::InputTag const & jetSrc,
-   edm::InputTag const & metSrc,
    boost::shared_ptr<MuonVPlusJetsIDSelectionFunctor> & muonIdTight,
    boost::shared_ptr<ElectronVPlusJetsIDSelectionFunctor> & electronIdTight,
    boost::shared_ptr<JetIDSelectionFunctor> & jetIdTight,
@@ -29,17 +25,13 @@ class WPlusJetsEventSelector : public EventSelector {
    double jetPtMin = 30.0
 			  );
   
-  virtual bool operator()( edm::EventBase const & t, std::strbitset & ret);
+  virtual bool operator()( pat::PatSummaryEvent const & t, std::strbitset & ret);
 
   std::vector<pat::Jet>      const & selectedJets     () const { return selectedJets_;     } 
   std::vector<pat::Electron> const & selectedElectrons() const { return selectedElectrons_;}
   std::vector<pat::Muon>     const & selectedMuons    () const { return selectedMuons_;    }
  
  protected: 
-  edm::InputTag muSrc_;
-  edm::InputTag eleSrc_;
-  edm::InputTag jetSrc_;
-  edm::InputTag metSrc_;
 
   std::vector<pat::Jet>       selectedJets_;
   std::vector<pat::Muon>      selectedMuons_;
