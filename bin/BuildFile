@@ -4,8 +4,14 @@
 <use name=FWCore/FWLite>
 <use name=rootcintex>
 <use name=root> 
+<use name=boost>
+<use name=CommonTools/Utils>
+<use name=PhysicsTools/Utilities>
+<use name=PhysicsTools/PatUtils>
+<use name=PhysicsTools/PatExamples>
 
 <environment>
  <bin file="PatBasicFWLiteAnalyzer.cc"> </bin>
  <bin file="PatMcMatchFWLiteAnalyzer.cc"> </bin> <!--Added for the new file. -->
+ <bin file="testSelection_wplusjets.C"> </bin>
 </environment>
