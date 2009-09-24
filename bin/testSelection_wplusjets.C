@@ -80,12 +80,9 @@ int main ( int argc, char ** argv )
     bool passed = (*wPlusJets)(ev, ret);
     vector<pat::Electron> const & electrons = wPlusJets->selectedElectrons();
     vector<pat::Muon>     const & muons     = wPlusJets->selectedMuons();
+    vector<pat::Jet>      const & jets      = wPlusJets->selectedJets();
 
-    cout << "Nele = " << electrons.size() << endl;
-    cout << "Nmuo = " << muons.size() << endl;
     if ( passed ) {
-      
-      vector<pat::Jet> const & jets = wPlusJets->selectedJets();
       for ( vector<pat::Jet>::const_iterator jetsBegin = jets.begin(),
 	      jetsEnd = jets.end(), ijet = jetsBegin; 
 	    ijet != jetsEnd; ++ijet) {
