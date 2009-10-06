@@ -30,18 +30,33 @@ int main ( int argc, char ** argv )
   
   cout << "About to allocate functors" << endl;
 
+  // Tight muon id
   boost::shared_ptr<MuonVPlusJetsIDSelectionFunctor>      muonIdTight     
     (new MuonVPlusJetsIDSelectionFunctor( MuonVPlusJetsIDSelectionFunctor::SUMMER08 ) );
+  // Tight electron id
   boost::shared_ptr<ElectronVPlusJetsIDSelectionFunctor>  electronIdTight     
     (new ElectronVPlusJetsIDSelectionFunctor( ElectronVPlusJetsIDSelectionFunctor::SUMMER08 ) );
+  // Tight jet id
   boost::shared_ptr<JetIDSelectionFunctor>                jetIdTight      
     ( new JetIDSelectionFunctor( JetIDSelectionFunctor::CRAFT08, JetIDSelectionFunctor::TIGHT) );
 
-
+  
+  // Loose muon id
   boost::shared_ptr<MuonVPlusJetsIDSelectionFunctor>      muonIdLoose     
     (new MuonVPlusJetsIDSelectionFunctor( MuonVPlusJetsIDSelectionFunctor::SUMMER08 ) );
+  muonIdLoose->set( "Chi2",    false);
+  muonIdLoose->set( "D0",      false);
+  muonIdLoose->set( "NHits",   false);
+  muonIdLoose->set( "ECalIso", false);
+  muonIdLoose->set( "HCalIso", false);
+  muonIdLoose->set( "RelIso", 0.2 );
+
+  // Loose electron id
   boost::shared_ptr<ElectronVPlusJetsIDSelectionFunctor>  electronIdLoose     
-    (new ElectronVPlusJetsIDSelectionFunctor( ElectronVPlusJetsIDSelectionFunctor::SUMMER08 ) );
+    (new ElectronVPlusJetsIDSelectionFunctor( ElectronVPlusJetsIDSelectionFunctor::SUMMER08) );
+  electronIdLoose->set( "D0",  false);
+  electronIdLoose->set( "RelIso", 0.2 );
+  // Loose jet id
   boost::shared_ptr<JetIDSelectionFunctor>                jetIdLoose      
     ( new JetIDSelectionFunctor( JetIDSelectionFunctor::CRAFT08, JetIDSelectionFunctor::LOOSE) );
 
@@ -53,12 +68,25 @@ int main ( int argc, char ** argv )
      jetIdTight,
      muonIdLoose,
      electronIdLoose,
-     jetIdLoose
+     jetIdLoose,
+     4,   // minJets
+     true, // mu + jets
+     false, // e + jets
+     20,  // tight mu pt
+     2.1, // tight mu eta
+     30,  // tight ele pt
+     2.4, // tight ele eta
+     10,  // loose mu pt
+     2.5, // loose mu eta
+     15,  // loose ele pt
+     2.5, // loose ele eta
+     30,  // jet pt
+     2.4  // jet eta
      ) 
   );
   
 
-  TFile  * file = new TFile("PATLayer1_Output.fromAOD_full.root");
+  TFile  * file = new TFile("vplusjets.root");
   TH1D * hist_jetPt = new TH1D("hist_jetPt", "Jet p_{T}", 20, 0, 100 );
   fwlite::Event ev(file);
 
@@ -67,7 +95,6 @@ int main ( int argc, char ** argv )
   for( ev.toBegin();
          ! ev.atEnd();
        ++ev, ++count) {
-
 
     fwlite::Handle<std::vector<pat::Jet> > allJets;
     allJets.getByLabel(ev,"cleanLayer1Jets");
@@ -85,40 +112,37 @@ int main ( int argc, char ** argv )
     allElectrons.getByLabel(ev,"cleanLayer1Electrons");
     if (!allElectrons.isValid() ) continue;
 
-    fwlite::Handle<std::vector<pat::Tau> > allTaus;
-    allTaus.getByLabel(ev,"cleanLayer1Taus");
-    if (!allTaus.isValid() ) continue;
-
-    fwlite::Handle<std::vector<pat::Photon> > allPhotons;
-    allPhotons.getByLabel(ev,"cleanLayer1Photons");
-    if (!allPhotons.isValid() ) continue;
+    fwlite::Handle<pat::TriggerEvent> triggerEvent;
+    triggerEvent.getByLabel(ev, "patTriggerEvent");
+    if (!triggerEvent.isValid() ) continue;
 
     pat::PatSummaryEvent summary;
     summary.jets      = *allJets;
     summary.METs      = *allMETs;
     summary.electrons = *allElectrons;
     summary.muons     = *allMuons;
-    summary.taus      = *allTaus;
-    summary.photons   = *allPhotons;
+    summary.triggerEvent   = &(*triggerEvent);
 
  
     std::strbitset ret = wPlusJets->getBitTemplate();
 
 
     bool passed = (*wPlusJets)(summary, ret);
-    vector<pat::Electron> const & electrons = wPlusJets->selectedElectrons();
-    vector<pat::Muon>     const & muons     = wPlusJets->selectedMuons();
+//     vector<pat::Electron> const & electrons = wPlusJets->selectedElectrons();
+//     vector<pat::Muon>     const & muons     = wPlusJets->selectedMuons();
 
-    vector<pat::Jet> const & jets = wPlusJets->selectedJets();
+//     vector<pat::Jet> const & jets = wPlusJets->selectedJets();
 
-    if ( passed ) {
-      for ( vector<pat::Jet>::const_iterator jetsBegin = jets.begin(),
-	      jetsEnd = jets.end(), ijet = jetsBegin; 
-	    ijet != jetsEnd; ++ijet) {
-	//	cout << "Looking at each jet, pt,eta = " << ijet->pt() << ", " << ijet->eta() << endl;
-	hist_jetPt->Fill( ijet->pt() );	  
-      } //end Jet loop   
-    } // end if passes event selection
+//     if ( passed ) {
+//       for ( vector<pat::Jet>::const_iterator jetsBegin = jets.begin(),
+// 	      jetsEnd = jets.end(), ijet = jetsBegin; 
+// 	    ijet != jetsEnd; ++ijet) {
+// 	//	cout << "Looking at each jet, pt,eta = " << ijet->pt() << ", " << ijet->eta() << endl;
+// 	hist_jetPt->Fill( ijet->pt() );	  
+//       } //end Jet loop   
+//     } // end if passes event selection
+
+
   } //end event loop
   
   cout << "Printing" << endl;

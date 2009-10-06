@@ -20,9 +20,14 @@ class WPlusJetsEventSelector : public pat::PatEventSelector {
    boost::shared_ptr<MuonVPlusJetsIDSelectionFunctor> & muonIdLoose,
    boost::shared_ptr<ElectronVPlusJetsIDSelectionFunctor> & electronIdLoose,
    boost::shared_ptr<JetIDSelectionFunctor> & jetIdLoose,
-   double muPtMin  = 20.0,
-   double elePtMin = 20.0,
-   double jetPtMin = 30.0
+   int minJets,
+   bool muPlusJets,
+   bool ePlusJets,
+   double muPtMin       , double muEtaMax,
+   double elePtMin      , double eleEtaMax,
+   double muPtMinLoose  , double muEtaMaxLoose,
+   double elePtMinLoose , double eleEtaMaxLoose,
+   double jetPtMin      , double jetEtaMax
 			  );
   
   virtual bool operator()( pat::PatSummaryEvent const & t, std::strbitset & ret);
@@ -36,6 +41,8 @@ class WPlusJetsEventSelector : public pat::PatEventSelector {
   std::vector<pat::Jet>       selectedJets_;
   std::vector<pat::Muon>      selectedMuons_;
   std::vector<pat::Electron>  selectedElectrons_;
+  std::vector<pat::Muon>      looseMuons_;
+  std::vector<pat::Electron>  looseElectrons_;
   std::vector<pat::MET>       selectedMETs_;
 
   boost::shared_ptr<MuonVPlusJetsIDSelectionFunctor>      muonIdTight_;
@@ -45,9 +52,24 @@ class WPlusJetsEventSelector : public pat::PatEventSelector {
   boost::shared_ptr<ElectronVPlusJetsIDSelectionFunctor>  electronIdLoose_;
   boost::shared_ptr<JetIDSelectionFunctor>                jetIdLoose_;
 
+  int minJets_;
+  bool muPlusJets_;
+  bool ePlusJets_;
+
   double muPtMin_  ;
+  double muEtaMax_ ;
   double elePtMin_ ;
+  double eleEtaMax_;
+
+  double muPtMinLoose_  ;
+  double muEtaMaxLoose_ ;
+  double elePtMinLoose_ ;
+  double eleEtaMaxLoose_;
+
   double jetPtMin_ ;
+  double jetEtaMax_;
+
+
   
 };
 
