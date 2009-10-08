@@ -1,11 +1,11 @@
 
-#include "PhysicsTools/PatExamples/interface/WPlusJetsEventSelector.h"
+#include "PhysicsTools/PatExamples/interface/WPlusJetsTopAnaXMuonEventSelector.h"
 
 #include <iostream>
 
 using namespace std;
 
-WPlusJetsEventSelector::WPlusJetsEventSelector( 
+WPlusJetsTopAnaXMuonEventSelector::WPlusJetsTopAnaXMuonEventSelector( 
     boost::shared_ptr<MuonVPlusJetsIDSelectionFunctor> & muonIdTight,
     boost::shared_ptr<ElectronVPlusJetsIDSelectionFunctor> & electronIdTight,
     boost::shared_ptr<JetIDSelectionFunctor> & jetIdTight,
@@ -37,18 +37,16 @@ WPlusJetsEventSelector::WPlusJetsEventSelector(
   jetPtMin_(jetPtMin), jetEtaMax_(jetEtaMax)
 {
   // make the bitset
-  push_back( "Inclusive"      );
-  push_back( "Trigger"        );
-  push_back( ">= 1 Lepton"    );
-  push_back( "== 1 Lepton"    );
-  push_back( "Tight Jet Cuts", minJets );
-  push_back( "MET Cut"        );
-  push_back( "Z Veto"         );
-  push_back( "Conversion Veto");
-  push_back( "Cosmic Veto"    );
+  push_back( "Inclusive"         );
+  push_back( "Trigger + 1 GlMu"  );
+  push_back( "1 Tight Mu"        );
+  push_back( ">= 4 Jets"         , minJets_ );
+  push_back( "No Loose Muons"    );
+  push_back( "No Loose Electrons");
+
 }
 
-bool WPlusJetsEventSelector::operator() ( pat::PatSummaryEvent const & t, std::strbitset & ret)
+bool WPlusJetsTopAnaXMuonEventSelector::operator() ( pat::PatSummaryEvent const & t, std::strbitset & ret)
 {
   selectedJets_.clear();
   selectedMuons_.clear();
@@ -59,11 +57,13 @@ bool WPlusJetsEventSelector::operator() ( pat::PatSummaryEvent const & t, std::s
 
   passCut( ret, "Inclusive");
 
-
+  int nGlobalMuons = 0;
   for ( std::vector<pat::Muon>::const_iterator muonBegin = t.muons.begin(),
 	  muonEnd = t.muons.end(), imuon = muonBegin;
 	imuon != muonEnd; ++imuon ) {
     if ( imuon->isGlobalMuon() ) {
+
+      nGlobalMuons++;
       // Tight cuts
       std::strbitset iret = muonIdTight_->getBitTemplate();
       if ( imuon->pt() > muPtMin_ && fabs(imuon->eta()) < muEtaMax_ && 
@@ -103,7 +103,8 @@ bool WPlusJetsEventSelector::operator() ( pat::PatSummaryEvent const & t, std::s
 	  jetEnd = t.jets.end(), ijet = jetBegin;
 	ijet != jetEnd; ++ijet ) {
     std::strbitset iret = jetIdTight_->getBitTemplate();
-    if ( ijet->pt() > jetPtMin_ && (*jetIdTight_)(*ijet, iret) ) {
+    if ( ijet->pt() > jetPtMin_ &&  fabs(ijet->eta()) < jetEtaMax_ && 
+	 (*jetIdTight_)(*ijet, iret) ) {
       selectedJets_.push_back( *ijet );
     }
   }
@@ -127,86 +128,74 @@ bool WPlusJetsEventSelector::operator() ( pat::PatSummaryEvent const & t, std::s
       passTrig = true;
     }
 
-    if ( (*this)["Trigger"] || 
-	 passTrig ) {
-      passCut(ret, "Trigger");
+    if ( (*this)["Trigger + 1 GlMu"] || 
+	 (passTrig && nGlobalMuons >= 1) ) {
+      passCut(ret, "Trigger + 1 GlMu");
 
-      int nleptons = 0;
-      if ( muPlusJets_ )
-	nleptons += selectedMuons_.size();
+      cout << "Passed trigger" << endl;
+
+      for ( std::vector<pat::Muon>::const_iterator muonBegin = t.muons.begin(),
+	      muonEnd = t.muons.end(), imuon = muonBegin;
+	    imuon != muonEnd; ++imuon ) {
+	if ( imuon->isGlobalMuon() ) {
+
+	  double hcalIso = imuon->hcalIso();
+	  double ecalIso = imuon->ecalIso();
+	  double trkIso  = imuon->trackIso();
+	  double pt      = imuon->pt() ;
       
-      if ( ePlusJets_ ) 
-	nleptons += selectedElectrons_.size();
+	  double relIso = (ecalIso + hcalIso + trkIso) / pt;
 
-      if ( (*this)[">= 1 Lepton"] || 
-	   ( nleptons > 0 ) ){
-	passCut( ret, ">= 1 Lepton");
 
-	bool oneMuon = 
-	  ( selectedMuons_.size() == 1 && 
-	    looseMuons_.size() + selectedElectrons_.size() + looseElectrons_.size() == 0 
-	    );
-	bool oneElectron = 
-	  ( selectedElectrons_.size() == 1 &&
-	    selectedMuons_.size() + looseMuons_.size() == 0
-	    );
+	  char buff[1000];
+	  sprintf(buff,
+		  "mujets:passStep1:%8.4g:%8.4g:%8d:%8.4g:%8.4g:%8.4g:%8.4g:%8.4g:%8.4g:%8.4g",
+		  imuon->pt(),
+		  imuon->eta(),
+		  imuon->numberOfValidHits(),
+		  imuon->dB(),
+		  imuon->normChi2(),
+		  imuon->isolationR03().emVetoEt,
+		  imuon->isolationR03().hadVetoEt,
+		  trkIso,
+		  ecalIso + hcalIso,
+		  relIso);
+	  cout << buff << endl;
+	}
 
-	if ( (*this)["== 1 Lepton"] || 
-	     ( (muPlusJets_ && oneMuon) ^ (ePlusJets_ && oneElectron )  )
-	     ) {
-	  passCut(ret, "== 1 Lepton");
+      }
+      
+      if ( (*this)["1 Tight Mu"] || 
+	   ( selectedMuons_.size()  == 1 ) ){
+	passCut( ret, "1 Tight Mu");
 
-	  if ( (*this)["Tight Jet Cuts"] ||
-	       static_cast<int>(selectedJets_.size()) >=  this->cut("Tight Jet Cuts", int()) ){
-	    passCut(ret,"Tight Jet Cuts");
+	cout << "mujets:passStep2:Number of jets = " << selectedJets_.size() << endl;
+
+	if ( (*this)[">= 4 Jets"] ||
+	     static_cast<int>(selectedJets_.size()) >=  this->cut(">= 4 Jets", int()) ){
+	  passCut(ret,">= 4 Jets");
+
 	  
-
-	    bool metCut = true;
-	    if ( (*this)["MET Cut"] ||
-		 metCut ) {
-	      passCut( ret, "MET Cut" );
-	  
-
-	      bool zVeto = true;
-	      if ( selectedMuons_.size() == 2 ) {
-	      }
-	      if ( selectedElectrons_.size() == 2 ) {
-	      }
-	      if ( (*this)["Z Veto"] ||
-		   zVeto ){
-		passCut(ret, "Z Veto");
+	  if ( (*this)["No Loose Muons"] ||
+	       looseMuons_.size() == 0 ){
+	    passCut(ret,"No Loose Muons");
 	    
-  
-		bool conversionVeto = true;
-		if ( (*this)["Conversion Veto"] ||
-		     conversionVeto ) {
-		  passCut(ret,"Conversion Veto");
-		
-
-
-		  bool cosmicVeto = true;
-		  if ( (*this)["Cosmic Veto"] ||
-		       cosmicVeto ) {
-		    passCut(ret,"Cosmic Veto");
-
-		  
-		  } // end if cosmic veto
-		
-		} // end if conversion veto
-
-	      } // end if z veto
-
-	    } // end if met cut
+	    
+	    if ( (*this)["No Loose Electrons"] ||
+		 looseMuons_.size() == 0 ){
+	      passCut(ret,"No Loose Electrons");
+	      
+	    } // end if no loose electrons
+	    
+	  } // end if no loose muons
       
-	  } // end if 1 tight jet 
+	} // end if 1 tight jet 
 	
-	} // end if == 1 lepton
-
-      } // end if >= 1 lepton
+      } // end if == 1 lepton
+      
+    } // end if trigger and 1 global lepton
     
-    } // end if trigger
-
   } // end if event triggered
-
+  
   return (bool)ret;
 }

@@ -13,7 +13,7 @@ This example creates a histogram of Jet Pt, using Jets with Pt above 30 and ETA 
 
 
 #if !defined(__CINT__) && !defined(__MAKECINT__)
-#include "PhysicsTools/PatExamples/interface/WPlusJetsEventSelector.h"
+#include "PhysicsTools/PatExamples/interface/WPlusJetsTopAnaXMuonEventSelector.h"
 #endif
 
 #include <iostream>
@@ -33,6 +33,7 @@ int main ( int argc, char ** argv )
   // Tight muon id
   boost::shared_ptr<MuonVPlusJetsIDSelectionFunctor>      muonIdTight     
     (new MuonVPlusJetsIDSelectionFunctor( MuonVPlusJetsIDSelectionFunctor::SUMMER08 ) );
+  muonIdTight->set( "D0", 0.02 );
   // Tight electron id
   boost::shared_ptr<ElectronVPlusJetsIDSelectionFunctor>  electronIdTight     
     (new ElectronVPlusJetsIDSelectionFunctor( ElectronVPlusJetsIDSelectionFunctor::SUMMER08 ) );
@@ -61,8 +62,8 @@ int main ( int argc, char ** argv )
     ( new JetIDSelectionFunctor( JetIDSelectionFunctor::CRAFT08, JetIDSelectionFunctor::LOOSE) );
 
   cout << "Making event selector" << endl;
-  boost::shared_ptr<WPlusJetsEventSelector> 
-    wPlusJets( new WPlusJetsEventSelector( 
+  boost::shared_ptr<WPlusJetsTopAnaXMuonEventSelector> 
+    wPlusJets( new WPlusJetsTopAnaXMuonEventSelector( 
      muonIdTight,
      electronIdTight,
      jetIdTight,
@@ -70,8 +71,8 @@ int main ( int argc, char ** argv )
      electronIdLoose,
      jetIdLoose,
      4,   // minJets
-     false, // mu + jets
-     true, // e + jets
+     true, // mu + jets
+     false, // e + jets
      20,  // tight mu pt
      2.1, // tight mu eta
      30,  // tight ele pt
@@ -87,8 +88,8 @@ int main ( int argc, char ** argv )
   
 
   vector<string> files;
-  files.push_back("vplusjets_1.root");
-  files.push_back("vplusjets_2.root");
+  files.push_back("ljmet_1.root");
+  files.push_back("ljmet_2.root");
   TH1D * hist_jetPt = new TH1D("hist_jetPt", "Jet p_{T}", 20, 0, 100 );
   fwlite::ChainEvent ev(files);
 
@@ -99,7 +100,7 @@ int main ( int argc, char ** argv )
        ++ev, ++count) {
 
     fwlite::Handle<std::vector<pat::Jet> > allJets;
-    allJets.getByLabel(ev,"cleanLayer1Jets");
+    allJets.getByLabel(ev,"selectedLayer1Jets");
     if (!allJets.isValid() ) continue;
 
     fwlite::Handle<std::vector<pat::MET> > allMETs;
@@ -107,11 +108,11 @@ int main ( int argc, char ** argv )
     if (!allMETs.isValid() ) continue;
 
     fwlite::Handle<std::vector<pat::Muon> > allMuons;
-    allMuons.getByLabel(ev,"cleanLayer1Muons");
+    allMuons.getByLabel(ev,"selectedLayer1Muons");
     if (!allMuons.isValid() ) continue;
 
     fwlite::Handle<std::vector<pat::Electron> > allElectrons;
-    allElectrons.getByLabel(ev,"cleanLayer1Electrons");
+    allElectrons.getByLabel(ev,"selectedLayer1Electrons");
     if (!allElectrons.isValid() ) continue;
 
     fwlite::Handle<pat::TriggerEvent> triggerEvent;
@@ -128,7 +129,7 @@ int main ( int argc, char ** argv )
  
     std::strbitset ret = wPlusJets->getBitTemplate();
 
-
+    cout << "Run, event = " << ev.id().run() << ", " << ev.id().event() << endl;
     bool passed = (*wPlusJets)(summary, ret);
 //     vector<pat::Electron> const & electrons = wPlusJets->selectedElectrons();
 //     vector<pat::Muon>     const & muons     = wPlusJets->selectedMuons();
