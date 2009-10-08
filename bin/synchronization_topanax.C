@@ -129,7 +129,7 @@ int main ( int argc, char ** argv )
  
     std::strbitset ret = wPlusJets->getBitTemplate();
 
-    cout << "Run, event = " << ev.id().run() << ", " << ev.id().event() << endl;
+//     cout << "Run, event = " << ev.id().run() << ", " << ev.id().event() << endl;
     bool passed = (*wPlusJets)(summary, ret);
 //     vector<pat::Electron> const & electrons = wPlusJets->selectedElectrons();
 //     vector<pat::Muon>     const & muons     = wPlusJets->selectedMuons();

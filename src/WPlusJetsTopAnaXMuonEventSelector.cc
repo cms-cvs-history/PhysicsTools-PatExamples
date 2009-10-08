@@ -44,6 +44,14 @@ WPlusJetsTopAnaXMuonEventSelector::WPlusJetsTopAnaXMuonEventSelector(
   push_back( "No Loose Muons"    );
   push_back( "No Loose Electrons");
 
+  // all on by default
+  set( "Inclusive"         );
+  set( "Trigger + 1 GlMu"  );
+  set( "1 Tight Mu"        );
+  set( ">= 4 Jets"         );
+  set( "No Loose Muons"    );
+  set( "No Loose Electrons");
+
 }
 
 bool WPlusJetsTopAnaXMuonEventSelector::operator() ( pat::PatSummaryEvent const & t, std::strbitset & ret)
@@ -69,11 +77,12 @@ bool WPlusJetsTopAnaXMuonEventSelector::operator() ( pat::PatSummaryEvent const 
       if ( imuon->pt() > muPtMin_ && fabs(imuon->eta()) < muEtaMax_ && 
 	   (*muonIdTight_)(*imuon, iret) ) {
 	selectedMuons_.push_back( *imuon );
-      } else {
+      } 
+      else {
 	// Loose cuts
-	std::strbitset iret = muonIdLoose_->getBitTemplate();
+	std::strbitset iret2 = muonIdLoose_->getBitTemplate();
 	if ( imuon->pt() > muPtMinLoose_ && fabs(imuon->eta()) < muEtaMaxLoose_ && 
-	     (*muonIdLoose_)(*imuon, iret) ) {
+	     (*muonIdLoose_)(*imuon, iret2) ) {
 	  looseMuons_.push_back( *imuon );
 	}
       }
@@ -91,9 +100,9 @@ bool WPlusJetsTopAnaXMuonEventSelector::operator() ( pat::PatSummaryEvent const 
       selectedElectrons_.push_back( *ielectron );
     } else {
       // Loose cuts
-      std::strbitset iret = electronIdLoose_->getBitTemplate();
+      std::strbitset iret2 = electronIdLoose_->getBitTemplate();
       if ( ielectron->pt() > elePtMinLoose_ && fabs(ielectron->eta()) < eleEtaMaxLoose_ && 
-	   (*electronIdLoose_)(*ielectron, iret) ) {
+	   (*electronIdLoose_)(*ielectron, iret2) ) {
 	looseElectrons_.push_back( *ielectron );
       }
     }
@@ -103,8 +112,7 @@ bool WPlusJetsTopAnaXMuonEventSelector::operator() ( pat::PatSummaryEvent const 
 	  jetEnd = t.jets.end(), ijet = jetBegin;
 	ijet != jetEnd; ++ijet ) {
     std::strbitset iret = jetIdTight_->getBitTemplate();
-    if ( ijet->pt() > jetPtMin_ &&  fabs(ijet->eta()) < jetEtaMax_ && 
-	 (*jetIdTight_)(*ijet, iret) ) {
+    if ( ijet->pt() > jetPtMin_ &&  fabs(ijet->eta()) < jetEtaMax_  ) {
       selectedJets_.push_back( *ijet );
     }
   }
@@ -128,61 +136,62 @@ bool WPlusJetsTopAnaXMuonEventSelector::operator() ( pat::PatSummaryEvent const 
       passTrig = true;
     }
 
-    if ( (*this)["Trigger + 1 GlMu"] || 
+    if ( ignoreCut("Trigger + 1 GlMu") || 
 	 (passTrig && nGlobalMuons >= 1) ) {
       passCut(ret, "Trigger + 1 GlMu");
 
-      cout << "Passed trigger" << endl;
+//       cout << "Passed trigger" << endl;
 
-      for ( std::vector<pat::Muon>::const_iterator muonBegin = t.muons.begin(),
-	      muonEnd = t.muons.end(), imuon = muonBegin;
-	    imuon != muonEnd; ++imuon ) {
-	if ( imuon->isGlobalMuon() ) {
+//       for ( std::vector<pat::Muon>::const_iterator muonBegin = t.muons.begin(),
+// 	      muonEnd = t.muons.end(), imuon = muonBegin;
+// 	    imuon != muonEnd; ++imuon ) {
+// 	if ( imuon->isGlobalMuon() ) {
 
-	  double hcalIso = imuon->hcalIso();
-	  double ecalIso = imuon->ecalIso();
-	  double trkIso  = imuon->trackIso();
-	  double pt      = imuon->pt() ;
+// 	  double hcalIso = imuon->hcalIso();
+// 	  double ecalIso = imuon->ecalIso();
+// 	  double trkIso  = imuon->trackIso();
+// 	  double pt      = imuon->pt() ;
       
-	  double relIso = (ecalIso + hcalIso + trkIso) / pt;
+// 	  double relIso = (ecalIso + hcalIso + trkIso) / pt;
 
 
-	  char buff[1000];
-	  sprintf(buff,
-		  "mujets:passStep1:%8.4g:%8.4g:%8d:%8.4g:%8.4g:%8.4g:%8.4g:%8.4g:%8.4g:%8.4g",
-		  imuon->pt(),
-		  imuon->eta(),
-		  imuon->numberOfValidHits(),
-		  imuon->dB(),
-		  imuon->normChi2(),
-		  imuon->isolationR03().emVetoEt,
-		  imuon->isolationR03().hadVetoEt,
-		  trkIso,
-		  ecalIso + hcalIso,
-		  relIso);
-	  cout << buff << endl;
-	}
+// 	  char buff[1000];
+// 	  sprintf(buff,
+// 		  "mujets:passStep1:%8.4g:%8.4g:%8d:%8.4g:%8.4g:%8.4g:%8.4g:%8.4g:%8.4g:%8.4g",
+// 		  imuon->pt(),
+// 		  imuon->eta(),
+// 		  imuon->numberOfValidHits(),
+// 		  imuon->dB(),
+// 		  imuon->normChi2(),
+// 		  imuon->isolationR03().emVetoEt,
+// 		  imuon->isolationR03().hadVetoEt,
+// 		  trkIso,
+// 		  ecalIso + hcalIso,
+// 		  relIso);
+// 	  cout << buff << endl;
+// 	}
 
-      }
+//       }
       
-      if ( (*this)["1 Tight Mu"] || 
+      if ( ignoreCut("1 Tight Mu") || 
 	   ( selectedMuons_.size()  == 1 ) ){
 	passCut( ret, "1 Tight Mu");
 
-	cout << "mujets:passStep2:Number of jets = " << selectedJets_.size() << endl;
+// 	cout << "mujets:passStep2:Number of jets = " << selectedJets_.size() << endl;
 
-	if ( (*this)[">= 4 Jets"] ||
+	if ( ignoreCut(">= 4 Jets") ||
 	     static_cast<int>(selectedJets_.size()) >=  this->cut(">= 4 Jets", int()) ){
 	  passCut(ret,">= 4 Jets");
 
 	  
-	  if ( (*this)["No Loose Muons"] ||
+	  if ( ignoreCut("No Loose Muons") ||
 	       looseMuons_.size() == 0 ){
 	    passCut(ret,"No Loose Muons");
 	    
+
 	    
-	    if ( (*this)["No Loose Electrons"] ||
-		 looseMuons_.size() == 0 ){
+	    if ( ignoreCut("No Loose Electrons") ||
+		 looseElectrons_.size() + selectedElectrons_.size() == 0 ){
 	      passCut(ret,"No Loose Electrons");
 	      
 	    } // end if no loose electrons

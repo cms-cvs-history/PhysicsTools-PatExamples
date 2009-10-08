@@ -46,6 +46,17 @@ WPlusJetsEventSelector::WPlusJetsEventSelector(
   push_back( "Z Veto"         );
   push_back( "Conversion Veto");
   push_back( "Cosmic Veto"    );
+
+  // turn everything on by default
+  set( "Inclusive"      );
+  set( "Trigger"        );
+  set( ">= 1 Lepton"    );
+  set( "== 1 Lepton"    );
+  set( "Tight Jet Cuts" );
+  set( "MET Cut"        );
+  set( "Z Veto"         );
+  set( "Conversion Veto");
+  set( "Cosmic Veto"    );
 }
 
 bool WPlusJetsEventSelector::operator() ( pat::PatSummaryEvent const & t, std::strbitset & ret)
@@ -127,7 +138,7 @@ bool WPlusJetsEventSelector::operator() ( pat::PatSummaryEvent const & t, std::s
       passTrig = true;
     }
 
-    if ( (*this)["Trigger"] || 
+    if ( ignoreCut("Trigger") || 
 	 passTrig ) {
       passCut(ret, "Trigger");
 
@@ -138,7 +149,7 @@ bool WPlusJetsEventSelector::operator() ( pat::PatSummaryEvent const & t, std::s
       if ( ePlusJets_ ) 
 	nleptons += selectedElectrons_.size();
 
-      if ( (*this)[">= 1 Lepton"] || 
+      if ( ignoreCut(">= 1 Lepton") || 
 	   ( nleptons > 0 ) ){
 	passCut( ret, ">= 1 Lepton");
 
@@ -151,18 +162,18 @@ bool WPlusJetsEventSelector::operator() ( pat::PatSummaryEvent const & t, std::s
 	    selectedMuons_.size() + looseMuons_.size() == 0
 	    );
 
-	if ( (*this)["== 1 Lepton"] || 
+	if ( ignoreCut("== 1 Lepton") || 
 	     ( (muPlusJets_ && oneMuon) ^ (ePlusJets_ && oneElectron )  )
 	     ) {
 	  passCut(ret, "== 1 Lepton");
 
-	  if ( (*this)["Tight Jet Cuts"] ||
+	  if ( ignoreCut("Tight Jet Cuts") ||
 	       static_cast<int>(selectedJets_.size()) >=  this->cut("Tight Jet Cuts", int()) ){
 	    passCut(ret,"Tight Jet Cuts");
 	  
 
 	    bool metCut = true;
-	    if ( (*this)["MET Cut"] ||
+	    if ( ignoreCut("MET Cut") ||
 		 metCut ) {
 	      passCut( ret, "MET Cut" );
 	  
@@ -172,20 +183,20 @@ bool WPlusJetsEventSelector::operator() ( pat::PatSummaryEvent const & t, std::s
 	      }
 	      if ( selectedElectrons_.size() == 2 ) {
 	      }
-	      if ( (*this)["Z Veto"] ||
+	      if ( ignoreCut("Z Veto") ||
 		   zVeto ){
 		passCut(ret, "Z Veto");
 	    
   
 		bool conversionVeto = true;
-		if ( (*this)["Conversion Veto"] ||
+		if ( ignoreCut("Conversion Veto") ||
 		     conversionVeto ) {
 		  passCut(ret,"Conversion Veto");
 		
 
 
 		  bool cosmicVeto = true;
-		  if ( (*this)["Cosmic Veto"] ||
+		  if ( ignoreCut("Cosmic Veto") ||
 		       cosmicVeto ) {
 		    passCut(ret,"Cosmic Veto");
 
