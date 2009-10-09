@@ -13,4 +13,5 @@
  <bin file="PatMcMatchFWLiteAnalyzer.cc"> </bin> <!--Added for the new file. --> 
  <bin file="testSelection_wplusjets.C"> </bin>
  <bin file="synchronization_topanax.C"> </bin>
+ <bin file="synchronization_topanax_ejets.C"> </bin>
 </environment>
