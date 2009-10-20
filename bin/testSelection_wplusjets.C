@@ -107,8 +107,8 @@ int main ( int argc, char ** argv )
 
 
     bool passed = wPlusJets(ev, ret);
-    vector<pat::Electron> const & electrons = wPlusJets.selectedElectrons();
-    vector<pat::Muon>     const & muons     = wPlusJets.selectedMuons();
+    // vector<pat::Electron> const & electrons = wPlusJets.selectedElectrons();
+    // vector<pat::Muon>     const & muons     = wPlusJets.selectedMuons();
     vector<pat::Jet>      const & jets      = wPlusJets.selectedJets();
 
     if ( passed ) {
