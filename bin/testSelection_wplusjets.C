@@ -1,8 +1,6 @@
-/*   A macro for making a histogram of Jet Pt with cuts
-This is a basic way to cut out jets of a certain Pt and Eta using an if statement
-This example creates a histogram of Jet Pt, using Jets with Pt above 30 and ETA above -2.1 and below 2.1
+/* 
+Example W+Jets selection
 */
-#include "FWCore/FWLite/interface/AutoLibraryLoader.h"
 #include "DataFormats/FWLite/interface/Handle.h"
 #include "DataFormats/FWLite/interface/Event.h"
 #include "TFile.h"
@@ -10,12 +8,13 @@ This example creates a histogram of Jet Pt, using Jets with Pt above 30 and ETA 
 #include "TCanvas.h"
 #include "TLegend.h"
 #include "TSystem.h"
+#include "TROOT.h"
 
 
-#if !defined(__CINT__) && !defined(__MAKECINT__)
-#include "DataFormats/PatCandidates/interface/Jet.h"
+#include "PhysicsTools/FWLite/interface/EventContainer.h"
+#include "PhysicsTools/FWLite/interface/CommandLineParser.h" 
+
 #include "PhysicsTools/PatExamples/interface/WPlusJetsEventSelector.h"
-#endif
 
 #include <iostream>
 #include <cmath>      //necessary for absolute function fabs()
@@ -26,8 +25,87 @@ using namespace std;
 int main ( int argc, char ** argv )
 {
 
-  gSystem->Load("libFWCoreFWLite");
-  AutoLibraryLoader::enable();  
+
+   ////////////////////////////////
+   // ////////////////////////// //
+   // // Command Line Options // //
+   // ////////////////////////// //
+   ////////////////////////////////
+
+   // Tell people what this analysis code does and setup default options.
+   optutl::CommandLineParser parser ("W+Jets Example");
+
+   ////////////////////////////////////////////////
+   // Change any defaults or add any new command //
+   //      line options you would like here.     //
+   ////////////////////////////////////////////////
+   parser.stringValue ("outputFile")    = "wjets"; // .root added automatically
+
+
+   parser.addOption ("muPlusJets",   optutl::CommandLineParser::kBool,
+		     "Run mu+Jets",
+                     true );
+   parser.addOption ("ePlusJets",   optutl::CommandLineParser::kBool,
+		     "Run e+Jets",
+                     true );
+   parser.addOption ("minNJets",   optutl::CommandLineParser::kInteger,
+		     "Min number of tight jets",
+                     4 );
+   parser.addOption ("tightMuMinPt",   optutl::CommandLineParser::kDouble,
+		     "Min tight mu pt",
+                     20.0 );
+   parser.addOption ("tightMuMaxEta",   optutl::CommandLineParser::kDouble,
+		     "Max tight mu eta",
+                     2.1 );
+   parser.addOption ("tightEleMinPt",   optutl::CommandLineParser::kDouble,
+		     "Min tight e pt",
+		     30.0 );
+   parser.addOption ("tightEleMaxEta",   optutl::CommandLineParser::kDouble,
+		     "Max tight e eta",
+                     2.4 );
+   parser.addOption ("looseMuMinPt",   optutl::CommandLineParser::kDouble,
+		     "Min loose mu pt",
+                     20.0 );
+   parser.addOption ("looseMuMaxEta",   optutl::CommandLineParser::kDouble,
+		     "Max loose mu eta",
+                     2.1 );
+   parser.addOption ("looseEleMinPt",   optutl::CommandLineParser::kDouble,
+		     "Min loose e pt",
+		     30.0 );
+   parser.addOption ("looseEleMaxEta",   optutl::CommandLineParser::kDouble,
+		     "Max loose e eta",
+                     2.4 );
+   parser.addOption ("jetMinPt",   optutl::CommandLineParser::kDouble,
+		     "Min jet pt",
+		     30.0 );
+   parser.addOption ("jetMaxEta",   optutl::CommandLineParser::kDouble,
+		     "Max jet eta",
+                     2.4 );
+   
+
+   // Parse the command line arguments
+   parser.parseArguments (argc, argv);
+
+   //////////////////////////////////
+   // //////////////////////////// //
+   // // Create Event Container // //
+   // //////////////////////////// //
+   //////////////////////////////////
+
+   // This object 'event' is used both to get all information from the
+   // event as well as to store histograms, etc.
+   fwlite::EventContainer ev (parser);
+
+   ////////////////////////////////////////
+   // ////////////////////////////////// //
+   // //         Begin Run            // //
+   // // (e.g., book histograms, etc) // //
+   // ////////////////////////////////// //
+   ////////////////////////////////////////
+
+   // Setup a style
+   gROOT->SetStyle ("Plain");
+
   
   cout << "About to allocate functors" << endl;
 
@@ -38,6 +116,8 @@ int main ( int argc, char ** argv )
   // Tight electron id
   boost::shared_ptr<ElectronVPlusJetsIDSelectionFunctor>  electronIdTight     
     (new ElectronVPlusJetsIDSelectionFunctor( ElectronVPlusJetsIDSelectionFunctor::SUMMER08 ) );
+  electronIdTight->set( "D0", 0.02 );
+
   // Tight jet id
   boost::shared_ptr<JetIDSelectionFunctor>                jetIdTight      
     ( new JetIDSelectionFunctor( JetIDSelectionFunctor::CRAFT08, JetIDSelectionFunctor::TIGHT) );
@@ -64,9 +144,9 @@ int main ( int argc, char ** argv )
 
   cout << "Making event selector" << endl;
   WPlusJetsEventSelector wPlusJets(
-     edm::InputTag("cleanLayer1Muons"),
-     edm::InputTag("cleanLayer1Electrons"),
-     edm::InputTag("cleanLayer1Jets"),
+     edm::InputTag("selectedLayer1Muons"),
+     edm::InputTag("selectedLayer1Electrons"),
+     edm::InputTag("selectedLayer1Jets"),
      edm::InputTag("layer1METs"),
      edm::InputTag("triggerEvent"),
      muonIdTight,
@@ -75,48 +155,47 @@ int main ( int argc, char ** argv )
      muonIdLoose,
      electronIdLoose,
      jetIdLoose,
-     4,   // minJets
-     true, // mu + jets
-     false, // e + jets
-     20,  // tight mu pt
-     2.1, // tight mu eta
-     30,  // tight ele pt
-     2.4, // tight ele eta
-     10,  // loose mu pt
-     2.5, // loose mu eta
-     15,  // loose ele pt
-     2.5, // loose ele eta
-     30,  // jet pt
-     2.4  // jet eta
-     
+     parser.integerValue ("minNJets")      ,
+     parser.boolValue    ("muPlusJets")    ,
+     parser.boolValue    ("ePlusJets")     ,
+     parser.doubleValue  ("tightMuMinPt")  ,
+     parser.doubleValue  ("tightMuMaxEta") ,
+     parser.doubleValue  ("tightEleMinPt") ,
+     parser.doubleValue  ("tightEleMaxEta"),
+     parser.doubleValue  ("looseMuMinPt")  ,
+     parser.doubleValue  ("looseMuMaxEta") ,
+     parser.doubleValue  ("looseEleMinPt") ,
+     parser.doubleValue  ("looseEleMaxEta"),
+     parser.doubleValue  ("jetMinPt")      ,
+     parser.doubleValue  ("jetMaxEta")
      );
-  
-  
-  TFile  * file = new TFile("PATLayer1_Output.fromAOD_full.root");
-  TH1D * hist_jetPt = new TH1D("hist_jetPt", "Jet p_{T}", 20, 0, 100 );
-  fwlite::Event ev(file);
 
-  int count = 0;
+  
+
+
+  ev.add( new TH1F( "jetPt", "Jet p_{T};Jet p_{T} (GeV/c)", 30, 0, 300) );
+
+
   //loop through each event
   for( ev.toBegin();
          ! ev.atEnd();
-       ++ev, ++count) {
+       ++ev) {
 
  
     std::strbitset ret = wPlusJets.getBitTemplate();
 
 
     bool passed = wPlusJets(ev, ret);
-    // vector<pat::Electron> const & electrons = wPlusJets.selectedElectrons();
-    // vector<pat::Muon>     const & muons     = wPlusJets.selectedMuons();
-    vector<pat::Jet>      const & jets      = wPlusJets.selectedJets();
+    vector<pat::Electron> const & electrons = wPlusJets.selectedElectrons();
+    vector<pat::Muon>     const & muons     = wPlusJets.selectedMuons();
+    vector<pat::Jet>      const & jets      = wPlusJets.cleanedJets();
 
     if ( passed ) {
       for ( vector<pat::Jet>::const_iterator jetsBegin = jets.begin(),
 	      jetsEnd = jets.end(), ijet = jetsBegin; 
 	    ijet != jetsEnd; ++ijet) {
 	//	cout << "Looking at each jet, pt,eta = " << ijet->pt() << ", " << ijet->eta() << endl;
-	hist_jetPt->Fill( ijet->pt() );	  
+	ev.hist("jetPt")->Fill( ijet->pt() );	  
       } //end Jet loop   
     } // end if passes event selection
   } //end event loop
@@ -126,7 +205,5 @@ int main ( int argc, char ** argv )
 
   cout << "We're done!" << endl;
 
-  file->Close();
-  delete file;
   return 0;
 }
