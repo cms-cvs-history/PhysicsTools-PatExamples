@@ -195,14 +195,16 @@ PatBasicAnalyzer::beginJob()
   edm::Service<TFileService> fs;
   
   // book histograms:
-  jetTowers_= fs->make<TH1F>("jetTowers", "towers per jet",   90, 0,  90); 
-  elecNHits_= fs->make<TH1F>("elecNHits", "hits per track",   20, 0,  20); 
   histContainer_["photons"]=fs->make<TH1F>("photons", "photon multiplicity",   10, 0,  10);
   histContainer_["elecs"  ]=fs->make<TH1F>("elecs",   "electron multiplicity", 10, 0,  10);
   histContainer_["muons"  ]=fs->make<TH1F>("muons",   "muon multiplicity",     10, 0,  10);
   histContainer_["taus"   ]=fs->make<TH1F>("taus",    "tau multiplicity",      10, 0,  10);
   histContainer_["jets"   ]=fs->make<TH1F>("jets",    "jet multiplicity",      10, 0,  10);
   histContainer_["met"    ]=fs->make<TH1F>("met",     "missing E_{T}",         20, 0, 100);
+
+  // these are booked for special demonstration reasons during the tutorial
+  jetTowers_= fs->make<TH1F>("jetTowers", "towers per jet",   90, 0,  90); 
+  elecNHits_= fs->make<TH1F>("elecNHits", "hits per track",   20, 0,  20); 
 }
 
 /// everything that needs to be done after the event loop
