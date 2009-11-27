@@ -14,8 +14,8 @@ from PhysicsTools.PatAlgos.tools.tauTools import *
 switchTo31Xdefaults(process)
 
 # ----------------------------------------------------
-# EXAMPLE 1: change the pat jet collection in the 
-#            event content
+# EXERCISE 1: change the pat jet collection in the 
+#             event content
 # ----------------------------------------------------
 #from PhysicsTools.PatAlgos.tools.jetTools import *
 #switchJetCollection(process, 
@@ -30,8 +30,8 @@ switchTo31Xdefaults(process)
 #                    ) 
 
 # ----------------------------------------------------
-# EXAMPLE 2: add more jet collections to the pat
-#            event content
+# EXERCISE 2: add more jet collections to the pat
+#             event content
 # ----------------------------------------------------
 #from PhysicsTools.PatAlgos.tools.jetTools import *
 #addJetCollection(process,cms.InputTag('ak7CaloJets'),
@@ -63,8 +63,8 @@ switchTo31Xdefaults(process)
 #                               ]
 
 # ----------------------------------------------------
-# EXAMPLE 3: add different kinds of MET to the event
-#            content
+# EXERCISE 3: add different kinds of MET to the event
+#             content
 # ----------------------------------------------------
 #from PhysicsTools.PatAlgos.tools.metTools import *
 #addTcMET(process, 'TC')
@@ -73,8 +73,8 @@ switchTo31Xdefaults(process)
 #                               ]
 
 # ----------------------------------------------------
-# EXAMPLE 4: switch to different standard ouputs of
-#            the pat tuple
+# EXERCISE 4: switch to different standard ouputs of
+#             the pat tuple
 # ----------------------------------------------------
 ## switched from cleanLayer1Candidates to selectedLayer1Candidates
 #from PhysicsTools.PatAlgos.tools.coreTools import removeCleaning
@@ -83,6 +83,54 @@ switchTo31Xdefaults(process)
 ## add AODExtras to the event content
 #from PhysicsTools.PatAlgos.patEventContent_cff import patExtraAodEventContent
 #process.out.outputCommands+= patExtraAodEventContent 
+
+# ----------------------------------------------------
+# EXERCISE 5: add user defined isolation to a
+#             pat::Candidate
+# ----------------------------------------------------
+## embed isoDeposits for later use in the isolation
+## calculation in the analysis
+#process.allLayer1Muons.isoDeposits = cms.PSet(
+#    tracker = cms.InputTag("muIsoDepositTk"),
+#    ecal    = cms.InputTag("muIsoDepositCalByAssociatorTowers","ecal"),
+#    hcal    = cms.InputTag("muIsoDepositCalByAssociatorTowers","hcal"),
+#    user    = cms.VInputTag(
+#      cms.InputTag("muIsoDepositCalByAssociatorTowers","ho"), 
+#      cms.InputTag("muIsoDepositJets")
+#    )
+#)
+
+## define different types of isolation
+#process.allLayer1Muons.userIsolation = cms.PSet(
+#    tracker = cms.PSet(
+#      ## from tracker with deltaR<0.2     
+#      src = cms.InputTag("muIsoDepositTk"),
+#      deltaR = cms.double(0.2)
+#      mode = "sumRelative"
+#    ),
+#    hcal = cms.PSet(
+#      ## from hcal isoDeposits with deltaR<0.5 
+#      src = cms.InputTag("muIsoDepositCalByAssociatorTowers","hcal"),
+#      deltaR = cms.double(0.5)
+#    ),
+#    ecal = cms.PSet(
+#      ## from ecal isoDeposits with deltaR<0.5     
+#      src = cms.InputTag("muIsoDepositCalByAssociatorTowers","ecal"),
+#      deltaR = cms.double(0.5)
+#    ),
+#    user = cms.VPSet(
+#      cms.PSet(
+#        ## from hcal outer isoDeposits with deltaR<0.5 
+#        src = cms.InputTag("muIsoDepositCalByAssociatorTowers","ho"),
+#        deltaR = cms.double(0.5)
+#      ), 
+#      cms.PSet(
+#        ## from isoDeposits from jets deltaR<0.5     
+#        src = cms.InputTag("muIsoDepositJets"),
+#        deltaR = cms.double(0.5)
+#      )
+#    )
+#)
 
 # let it run
 process.p = cms.Path(
