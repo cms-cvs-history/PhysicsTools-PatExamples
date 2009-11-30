@@ -31,6 +31,7 @@ switchTo31Xdefaults(process)
 #            the PAT workflow
 # ----------------------------------------------------
 #from PhysicsTools.PatAlgos.tools.coreTools import *
+#process.patDefaultSequence.remove(process.makeAllLayer1Jets)
 #removeAllPATObjectsBut(process, ['Muons'])
 #removeSpecificPATObjects(process, ['Electrons', 'Muons', 'Taus'])
 
