@@ -105,8 +105,8 @@ switchTo31Xdefaults(process)
 #    tracker = cms.PSet(
 #      ## from tracker with deltaR<0.2     
 #      src = cms.InputTag("muIsoDepositTk"),
-#      deltaR = cms.double(0.2)
-#      mode = "sumRelative"
+#      deltaR = cms.double(0.2),
+#      mode = cms.string("sumRelative")
 #    ),
 #    hcal = cms.PSet(
 #      ## from hcal isoDeposits with deltaR<0.5 
