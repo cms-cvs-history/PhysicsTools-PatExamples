@@ -18,16 +18,24 @@ process.TFileService = cms.Service("TFileService",
                                    fileName = cms.string('analyzePatBasics.root')
                                    )
 
-## using the process.load function
-#process.load("PhysicsTools/PatExamples/PatBasicAnalyzer_cfi")
-
 ## using import and making the module known to the process afterwards
 from PhysicsTools.PatExamples.PatBasicAnalyzer_cfi import analyzeBasicPat
-process.analyzeBasicPat = analyzeBasicPat
 
-## cloning an existing module
-process.analyzeBasicPat2= analyzeBasicPat.clone()
+# ----------------------------------------------------
+# EXERCISE 1/2: (of Module 3)analyze patTuple which 
+#             contains both cleanLayer1Jets and sel-
+#             ectedLayer1Candidates or myCleanLayer1
+#             Jets
+# ----------------------------------------------------
+## create a module to analyze the selectedLayer1Jets w/o discarded jets
+#process.analyzeModifiedJets = analyzeBasicPat.clone(jetSrc='selectedLayer1Jets')
+## create a module to analyze the myCleanLayer1Jets w/o discarded jets
+process.analyzeModifiedJets = analyzeBasicPat.clone(jetSrc='myCleanLayer1Jets')
+
+## create a module to analyze the cleanLayer1Jets with discarded jets
+process.analyzeStandardJets = analyzeBasicPat.clone(jetSrc='cleanLayer1Jets')
+
 
 ## process path
-process.p = cms.Path(process.analyzeBasicPat * process.analyzeBasicPat2)
+process.p = cms.Path(process.analyzeStandardJets * process.analyzeModifiedJets)
 
