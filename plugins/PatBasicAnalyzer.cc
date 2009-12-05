@@ -33,6 +33,9 @@
     - Section 3: read user defined isolation variables. Recommended use together with
       test/patTuple_contents_cf.py (EXERCISE 5).
 
+    - Section 4: analyze the cleanLayer1Jets and check these for overlapping objects
+      (EXERCISE 3 of Module 3 -- Object Cross Cleaning).
+
    You can find out more about these exercises on the web page for the December PAT
    tutorial indicated below:
  
@@ -185,6 +188,19 @@ PatBasicAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
   //	      << "user User1 : " << muon->userIsolation(pat::User1Iso) << std::endl
   //	      << "user User2 : " << muon->userIsolation(pat::User2Iso) << std::endl;
   //  }
+
+  // -----------------------------------------
+  // Section 3: Show how to access user-defined 
+  //            isolation variables
+  // -----------------------------------------
+  for(edm::View<pat::Jet>::const_iterator jet=jets->begin(); jet!=jets->end(); ++jet){
+    if(!jet->overlapLabels().empty()){
+      std::cout << "checking cleanLayer1Jets for overlaps with: " << std::endl;
+      for(std::vector<std::string>::const_iterator overlap=jet->overlapLabels().begin(); overlap!=jet->overlapLabels().end(); ++overlap){
+	std::cout << *overlap << "  ::  " << jet->overlaps(*overlap).size() << std::endl;
+      }
+    }
+  }
 }
 
 /// everything that needs to be done before the event loop
