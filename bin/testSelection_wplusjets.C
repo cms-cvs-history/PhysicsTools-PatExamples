@@ -144,9 +144,9 @@ int main ( int argc, char ** argv )
 
   cout << "Making event selector" << endl;
   WPlusJetsEventSelector wPlusJets(
-     edm::InputTag("selectedLayer1Muons"),
-     edm::InputTag("selectedLayer1Electrons"),
-     edm::InputTag("selectedLayer1Jets"),
+     edm::InputTag("cleanLayer1Muons"),
+     edm::InputTag("cleanLayer1Electrons"),
+     edm::InputTag("cleanLayer1Jets"),
      edm::InputTag("layer1METs"),
      edm::InputTag("triggerEvent"),
      muonIdTight,
@@ -170,7 +170,7 @@ int main ( int argc, char ** argv )
      parser.doubleValue  ("jetMaxEta")
      );
 
-  
+  wPlusJets.set("Trigger", false);
 
 
   ev.add( new TH1F( "jetPt", "Jet p_{T};Jet p_{T} (GeV/c)", 30, 0, 300) );
@@ -181,11 +181,7 @@ int main ( int argc, char ** argv )
          ! ev.atEnd();
        ++ev) {
 
- 
-    std::strbitset ret = wPlusJets.getBitTemplate();
-
-
-    bool passed = wPlusJets(ev, ret);
+    bool passed = wPlusJets(ev);
     // vector<pat::Electron> const & electrons = wPlusJets.selectedElectrons();
     // vector<pat::Muon>     const & muons     = wPlusJets.selectedMuons();
     vector<pat::Jet>      const & jets      = wPlusJets.cleanedJets();
