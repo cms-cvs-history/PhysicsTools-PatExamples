@@ -2,6 +2,7 @@
 #include <string>
 
 #include "TH1.h"
+#include "TH2.h"
 
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
@@ -107,59 +108,68 @@ private:
   /// histograms are booked in the beginJob() 
   /// method (for 1-dim histograms)
   std::map<std::string,TH1F*> hist1D_; 
+  /// same for (for 2-dim histograms)
+  std::map<std::string,TH2F*> hist2D_; 
   /// correction level for pat jet
   std::string corrLevel_;
   /// pat jets
-  edm::InputTag jetsPat_;
+  edm::InputTag jets_;
   /// reco jets
-  edm::InputTag jetsReco_;
+  edm::InputTag comp_;
 };
 
 #include "DataFormats/PatCandidates/interface/Jet.h"
 
-PatJetAnalyzer::PatJetAnalyzer(const edm::ParameterSet& cfg) : hist1D_(),
+PatJetAnalyzer::PatJetAnalyzer(const edm::ParameterSet& cfg) : hist1D_(), hist2D_(),
   corrLevel_(cfg.getParameter<std::string>("corrLevel")),
-  jetsPat_(cfg.getParameter<edm::InputTag>("src"))
+  jets_(cfg.getParameter<edm::InputTag>("jets"))
 {
-  if(cfg.existsAs<std::string>("reco")){
+  if(cfg.existsAs<edm::InputTag>("comp")){
     // can be omitted in the cfi file
-    jetsReco_=cfg.getParameter<edm::InputTag>("reco");
+    comp_=cfg.getParameter<edm::InputTag>("comp");
   }
 }
 
 void
 PatJetAnalyzer::analyze(const edm::Event& event, const edm::EventSetup& setup)
 {
-  edm::Handle<edm::View<pat::Jet> > jetsPat;
-  event.getByLabel(jetsPat_,jetsPat);
+  edm::Handle<edm::View<pat::Jet> > jets;
+  event.getByLabel(jets_,jets);
 
-  size_t nPat =0;
-  for(edm::View<pat::Jet>::const_iterator jet=jetsPat->begin(); jet!=jetsPat->end(); ++jet){
-    hist1D_["jetPtPat"]->Fill(jet->correctedJet(corrLevel(), corrFlavor()).pt());
-    if(jet->correctedJet(corrLevel(), corrFlavor()).pt()>20){ ++nPat; }
+  unsigned int mult =0;
+  for(edm::View<pat::Jet>::const_iterator jet=jets->begin(); jet!=jets->end(); ++jet){
+    hist1D_["pt"]->Fill(jet->correctedJet(corrLevel(), corrFlavor()).pt());
+    if(jet->correctedJet(corrLevel(), corrFlavor()).pt()>20){ ++mult; }
 
     if( jet->genParton() && abs(jet->genParton()->pdgId())<6 ){
       double resp=( jet->pt()-jet->genParton()->pt() )/jet->genParton()->pt();
       for(unsigned int idx=0; idx<MAXBIN; ++idx){
 	if(BINS[idx]<=jet->genParton()->pt() && jet->genParton()->pt()<BINS[idx+1]){
-	  char buffer [10]; sprintf (buffer, "jes_%i", idx);
+	  char buffer [10]; sprintf (buffer, "resp_%i", idx);
 	  hist1D_[buffer]->Fill( resp );
 	}
       }
     }
   }
-  hist1D_["jetMultPat"]->Fill(nPat);
+  hist1D_["mult"]->Fill(mult);
 
-  if(!jetsReco_.label().empty()){
-    edm::Handle<edm::View<reco::Jet> > jetsReco;
-    event.getByLabel(jetsReco_,jetsReco);
+  if(!comp_.label().empty()){
+    edm::Handle<edm::View<reco::Jet> > comp;
+    event.getByLabel(comp_,comp);
     
-    size_t nReco=0;
-    for(edm::View<reco::Jet>::const_iterator jet=jetsReco->begin(); jet!=jetsReco->end(); ++jet){
-      hist1D_["jetPtReco"]->Fill(jet->pt());
-      if(jet->pt()>20){ ++nReco; }
+    mult=0;
+    unsigned int idx=0;
+    for(edm::View<reco::Jet>::const_iterator jet=comp->begin(); jet!=comp->end(); ++jet, ++idx){
+      hist1D_["ptComp"]->Fill(jet->pt());
+      if(jet->pt()>20){ ++mult; }
+
+      if(idx<jets->size()){
+	hist2D_["ptCorr" ]->Fill((*jets)[idx].pt (), (*comp)[idx].pt ());
+	hist2D_["etaCorr"]->Fill((*jets)[idx].eta(), (*comp)[idx].eta());
+	hist2D_["phiCorr"]->Fill((*jets)[idx].phi(), (*comp)[idx].phi());
+      }
     }
-    hist1D_["jetMultReco"]->Fill(nReco);
+    hist1D_["multComp"]->Fill(mult);
   }
 }
 
@@ -170,15 +180,19 @@ PatJetAnalyzer::beginJob()
   edm::Service<TFileService> fs;
 
   for(unsigned int idx=0; idx<MAXBIN; ++idx){
-    char buffer [10]; sprintf (buffer, "jes_%i", idx);
+    char buffer [10]; sprintf (buffer, "resp_%i", idx);
     hist1D_[buffer]=fs->make<TH1F>(buffer, "(pt_{rec}-pt_{gen})/pt_{rec}",  80, 10., 10.);
   }  
-  hist1D_["jetMultPat" ]=fs->make<TH1F>("jetMultPat" , "N_{>20}(jet)" ,   10, 0.,  10.);
-  hist1D_["jetPtPat"   ]=fs->make<TH1F>("jetPtPat"   , "pt_{all}(jet)",  150, 0., 300.);
-  if(jetsReco_.label().empty()) return;
+  hist1D_["mult" ]   =fs->make<TH1F>("mult"    , "N_{>20}(jet)" ,   10, 0.,  10.);
+  hist1D_["pt"   ]   =fs->make<TH1F>("pt"      , "pt_{all}(jet)",  150, 0., 300.);
+  if(comp_.label().empty()) return;
 
-  hist1D_["jetMultReco"]=fs->make<TH1F>("jetMultReco", "N_{>20}(jet)" ,   10, 0.,  10.);
-  hist1D_["jetPtReco"  ]=fs->make<TH1F>("jetPtReco"  , "pt_{all}(jet)",  150, 0., 300.);
+  hist1D_["multComp"]=fs->make<TH1F>("multComp", "N_{>20}(jet)" ,   10, 0.,  10.);
+  hist1D_["ptComp"  ]=fs->make<TH1F>("ptComp"  , "pt_{all}(jet)",  150, 0., 300.);
+
+  hist2D_["ptCorr"  ]=fs->make<TH2F>("ptCorr"  , "pt_{all}" ,  150,     0.,   300.,  150,     0.,   300.);
+  hist2D_["etaCorr" ]=fs->make<TH2F>("etaCorr" , "eta_{all}",   50,     0.,     5.,   50,     0.,     5.);
+  hist2D_["phiCorr" ]=fs->make<TH2F>("phiCorr" , "phi_{all}",   60,  -3.14,   3.14,   60,  -3.14,   3.14);
 }
 
 void 

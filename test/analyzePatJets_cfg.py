@@ -16,8 +16,11 @@ process.TFileService = cms.Service("TFileService",
                                    )
 
 ## do Exercise 1(c)
-process.p = cms.Path(process.comparePatAndReco)
+##process.p = cms.Path(process.comparePatAndReco)
 
 ## do Exercise 1(d)
 ## process.p = cms.Path(process.doJetResponse)
+
+## do Exercise 3
+process.p = cms.Path(process.compareCaloAndOthers)
 

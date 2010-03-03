@@ -12,9 +12,10 @@ ak5CaloJetsL2L3 = L2L3CorJetAK5Calo.clone(correctors = ["L2L3JetCorrectorAK5Calo
 ## setup the configuration for Exercise 1 (c)
 ###
 
-compareRaw = analyzePatJets.clone(corrLevel="raw", reco="ak5CaloJets")
-compareL2  = analyzePatJets.clone(corrLevel="rel", reco="ak5CaloJetsL2")
-compareL3  = analyzePatJets.clone(corrLevel="abs", reco="ak5CaloJetsL2L3")
+compareRaw = comparePatJets.clone(corrLevel="raw", comp="ak5CaloJets")
+compareL2  = comparePatJets.clone(corrLevel="rel", comp="ak5CaloJetsL2")
+compareL3  = comparePatJets.clone(corrLevel="abs", comp="ak5CaloJetsL2L3")
+
 
 ## sequence for Exercise 1(c)
 comparePatAndReco = cms.Sequence(
@@ -29,11 +30,11 @@ comparePatAndReco = cms.Sequence(
 ## setup the configuration for Exercise 1 (d)
 ###
 
-calibRaw = analyzeJES.clone(corrLevel="raw")
-calibL2  = analyzeJES.clone(corrLevel="rel")
-calibL3  = analyzeJES.clone(corrLevel="abs")
-calibL5  = analyzeJES.clone(corrLevel="had:uds")
-calibL7  = analyzeJES.clone(corrLevel="part:uds")
+calibRaw = analyzePatJets.clone(corrLevel="raw")
+calibL2  = analyzePatJets.clone(corrLevel="rel")
+calibL3  = analyzePatJets.clone(corrLevel="abs")
+calibL5  = analyzePatJets.clone(corrLevel="had:uds")
+calibL7  = analyzePatJets.clone(corrLevel="part:uds")
 
 ## sequence for Exercise 1(d)
 doJetResponse = cms.Sequence(
@@ -44,4 +45,17 @@ doJetResponse = cms.Sequence(
     calibL3  +
     calibL5  +
     calibL7
+)
+
+###
+## setup the configuration for Exercise 3
+###
+
+compareJPT    = comparePatJets.clone(comp="cleanPatJetsAK5JPT")
+comparePflow  = comparePatJets.clone(comp="cleanPatJetsAK5PF" )
+
+## sequence for Exercise 3
+compareCaloAndOthers = cms.Sequence(
+    compareJPT  +
+    comparePflow
 )

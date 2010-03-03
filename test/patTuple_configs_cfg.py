@@ -3,51 +3,58 @@
 # Starting with a skeleton process which gets imported with the following line
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
-# ----------------------------------------------------
-# switch off new tau features introduced in 33X to
-# restore 31X defaults new feaures:
-# - shrinkingConeTaus instead of fixedCone ones
-# - TaNC discriminants attached for shrinkingConeTaus
-# - default preselection on cleaningLayer1
-# ----------------------------------------------------
-from PhysicsTools.PatAlgos.tools.tauTools import *
-switchTo31Xdefaults(process)
+# uncomment the following section for Exercise 3
+from PhysicsTools.PatAlgos.tools.jetTools import *
 
-# ----------------------------------------------------
-# EXAMPLE 1: restrict input to AOD
-# ----------------------------------------------------
-#from PhysicsTools.PatAlgos.tools.coreTools import *
-#restrictInputToAOD(process)
+# produce jpt corrected calo jets, which are not on AOD per default
+process.load("PhysicsTools.PatAlgos.recoLayer0.jetPlusTrack_cff")
+process.jpt = cms.Path(
+    process.jptCaloJets
+)
 
-# ----------------------------------------------------
-# EXAMPLE 2: remove MC matching from PAT default
-#            sequences
-# ----------------------------------------------------
-#from PhysicsTools.PatAlgos.tools.coreTools import *
-#removeMCMatching(process, 'All')
+# add JPT jets
+addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetAntiKt5'),
+  'AK5', 'JPT',
+  doJTA        = True,
+  doBTagging   = True,
+  jetCorrLabel = None,
+  doType1MET   = False,
+  doL1Cleaning = True,
+  doL1Counters = False,                 
+  genJetCollection = cms.InputTag("ak5GenJets"),
+  doJetID      = False
+)
 
-# ----------------------------------------------------
-# EXAMPLE 3: remove certain object collections from
-#            the PAT workflow
-# ----------------------------------------------------
-#from PhysicsTools.PatAlgos.tools.coreTools import *
-#removeAllPATObjectsBut(process, ['Muons'])
-#removeSpecificPATObjects(process, ['Electrons', 'Muons', 'Taus'])
+# add pflow jets
+addJetCollection(process,cms.InputTag('ak5PFJets'),
+  'AK5', 'PF',
+  doJTA        = True,
+  doBTagging   = True,
+  jetCorrLabel = ('AK5','PF'),
+  doType1MET   = True,
+  doL1Cleaning = True,                 
+  doL1Counters = False,
+  genJetCollection=cms.InputTag("ak5GenJets"),
+  doJetID      = True,
+  jetIdLabel   = "ak5"
+)
+
+from PhysicsTools.PatAlgos.tools.metTools import *
+# add tc MET
+addTcMET(process, 'TC')
+# add pflow MET
+addPfMET(process, 'PF')
+
 
 # let it run
 process.p = cms.Path(
-    process.patDefaultSequence
-    )
+  process.patDefaultSequence
+)
 
 # ----------------------------------------------------
 # You might want to change some of these default
 # parameters
 # ----------------------------------------------------
-#process.GlobalTag.globaltag =  ...    ##  (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)
-#process.source.fileNames = [
-#'/store/relval/CMSSW_3_1_1/RelValCosmics/GEN-SIM-RECO/STARTUP31X_V1-v2/0002/7625DA7D-E36B-DE11-865A-000423D174FE.root'
-#                            ]         ##  (e.g. 'file:AOD.root')
-#process.maxEvents.input = ...         ##  (e.g. -1 to run on all events)
-#process.out.outputCommands = [ ... ]  ##  (e.g. taken from PhysicsTools/PatAlgos/python/patEventContent_cff.py)
-#process.out.fileName = ...            ##  (e.g. 'myTuple.root')
-#process.options.wantSummary = True    ##  (to suppress the long output at the end of the job)    
+process.maxEvents.input = -1
+process.out.outputCommands+= [ 'keep *_ak5CaloJets_*_*' ]
+process.options.wantSummary = False
