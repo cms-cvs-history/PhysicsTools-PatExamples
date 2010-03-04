@@ -59,16 +59,18 @@ static const float BINS[]={0., 10., 20., 40., 60., 80., 100., 125., 150.};
 
    (c)
    We choose a simple implementation of an EDAnalyzer, which takes the following parameters: 
-    - src       : input for the pat  jet collection (edm::InputTag).
-    - reco      : input for the reco jet collection (edm::InputTag).
+    - jets      : input for the pat  jet collection (edm::InputTag).
+    - comp      : input for an alternative jet collection for comparisons, which can be of 
+                  type reco::Jet or pat::Jet (edm::InputTag).
     - corrLevel : string for the pat jet correction level.
    The corrLevel string is expected to be of the form corrType:flavorType. The parameter 
-   reco is optional; it can be omitted in the configuration file if not needed. We neglect 
-   a complex parsing to check for allowed concrete substrings for the correction level or 
-   correction flavor for the sake of simplicity; the user should take care of a proper input 
-   here. Illegal strings will lead to an edm::Exception of the jet correction service. In a 
-   corresponding cff file this module will be cloned for each correction level as mentioned 
-   in the exercise.
+   comp is optional; it can be omitted in the configuration file if not needed. This is 
+   reflected by two definitions of the module in the corresponding cfi file. We neglect a 
+   complex parsing to check for allowed concrete substrings for the correction level or 
+   correction flavor for the sake of simplicity; the user should take care to give a proper 
+   input here. Illegal strings will lead to an edm::Exception of the jet correction service.    
+   In a corresponding cff file this module will be cloned for each correction level as 
+   mentioned in the exercise.
 
    (d)
    For the sake of simplicity we restrict ourselves to the example of partons. The partons 
@@ -114,7 +116,7 @@ private:
   std::string corrLevel_;
   /// pat jets
   edm::InputTag jets_;
-  /// reco jets
+  /// jets for comparison
   edm::InputTag comp_;
 };
 

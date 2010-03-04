@@ -9,10 +9,10 @@ analyzePatJets = cms.EDAnalyzer("PatJetAnalyzer",
 )                               
 
 comparePatJets = cms.EDAnalyzer("PatJetAnalyzer",
-  ## input for reco jets
-  comp = cms.InputTag("ak5CaloJets"),
   ## input for pat jets 
   jets = cms.InputTag("cleanPatJets"),                              
+  ## input for alternative jets collection
+  comp = cms.InputTag("ak5CaloJets"),
   ## correction level for pat jet in
   ## the format corrType:flavorType
   corrLevel = cms.string("abs")
