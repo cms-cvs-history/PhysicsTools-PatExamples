@@ -9,7 +9,7 @@ process.source = cms.Source("PoolSource",
 )
 
 process.MessageLogger = cms.Service("MessageLogger")
-process.load("PhysicsTools/PatExamples/PatIsolationAnalyzer_cff")
+process.load("PhysicsTools/PatExamples/PatIsolationAnalyzer_cfi")
 
 process.TFileService = cms.Service("TFileService",
                                    fileName = cms.string('analyzePatIsolation.root')

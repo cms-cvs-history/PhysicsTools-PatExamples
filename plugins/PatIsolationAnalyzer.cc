@@ -61,12 +61,27 @@
 
    Solution  :
 
-   (b)
-   For the sake of simplicity we do not mixup the jet and the MET part of the exercise, but keep 
-   the jet part for the PatJetAnalyzer module. For the MET part of the exercise an implementation 
-   of an EDAnalyzer, which takes the following parameters:
-    - mets      : input for the pat MET collection (edm::InputTag).
-    - comp      : input for an alternative MET collection for comparisons (edm::InputTag).
+   (c)
+   We choose the muons as leptons to check the isolation variables. The analyzer only need on para-
+   meter (edm::InputTag muons). Different kinds of standard and user-defined isolations are inspected 
+   and compared (if available). Note that the user-defined isolations must be configured beforehand 
+   during the patTuple production steps. You can use a standard tool for the configuration of pre 
+   defined userIsolations for tracker, ecal and hcal. You can also use a new tool to add even more 
+   idividually defined isolation variables. Note that you can NOT concatenate these tools, as the 
+   edm::ParameterSet for userIsolation must be replaced as a whole. 
+
+   (d)
+   We use the isoDeposits to fill the energy/pt flow as a function of the distance R from the muon. 
+   The energy is plotted differentially, in rings of deltaR. At the end each of the plots is normalized 
+   to the number of muons, thus representing the mean energy in each ring of deltaR around the muon. 
+   In an extension you could split the sample for isolated muons from W decays and non isolated muons
+   within jets to see the difference in enegy/pt flow. For the sake of simplicity this step is omitted
+   here.
+
+   (e)
+   For this exercise we added a new tool for a completely user-defined userIsolation PSet, which 
+   includes th pre-defined userIsolations for tracker, ecal and hcal and five additional definitions
+   of isolation variables. 
 */
 
 class PatIsolationAnalyzer : public edm::EDAnalyzer {
@@ -119,20 +134,27 @@ PatIsolationAnalyzer::analyze(const edm::Event& event, const edm::EventSetup& se
   // and a corresponding LogInfo is issued.
   for(edm::View<pat::Muon>::const_iterator muon=muons->begin(); muon!=muons->end(); ++muon){
     fill("corrTrackEcal", muon->trackIso(), muon->ecalIso());
-    fill("corrTrackHcal", muon->trackIso(), muon->hcalIso());
+    fill("corrEcalHcal" , muon->ecalIso (), muon->hcalIso());
     fill("corrTrackUser", muon->trackIso(), muon->userIsolation(pat::TrackIso));
     fill("corrEcalUser" , muon->ecalIso (), muon->userIsolation(pat::EcalIso ));
     fill("corrHcalUser" , muon->hcalIso (), muon->userIsolation(pat::HcalIso ));
 
     // we need this histogram for later normalization of the eflow histograms to 
     // entries per muon.
-    hist1D_["norm"]->Fill(1);
+    hist1D_["norm"]->Fill(0.5);
     
     // fill energy flow plots for each muon; these need to be normalized to entries
     // per muon later!
     energyFlow(hist1D_["eflowTrack"], muon->trackIsoDeposit());
     energyFlow(hist1D_["eflowEcal" ], muon->ecalIsoDeposit ());
     energyFlow(hist1D_["eflowHcal" ], muon->hcalIsoDeposit ());
+
+    // fill a complete user-defined isolation (if it exists)
+    if(muon->userIsolation(pat::User1Iso)!=-1.0){ fill("corrCaloUser1" , muon->trackIso(),      muon->userIsolation(pat::User1Iso) ); }
+    if(muon->userIsolation(pat::User2Iso)!=-1.0){ fill("corrCaloUser2" , muon->trackIso(),      muon->userIsolation(pat::User2Iso) ); }
+    if(muon->userIsolation(pat::User3Iso)!=-1.0){ fill("corrCaloUser3" , muon->trackIso(), sqrt(muon->userIsolation(pat::User3Iso))); }
+    if(muon->userIsolation(pat::User4Iso)!=-1.0){ hist1D_["user4Iso"]->Fill(muon->userIsolation(pat::User4Iso) ); }
+    if(muon->userIsolation(pat::User5Iso)!=-1.0){ hist1D_["user5Iso"]->Fill(muon->userIsolation(pat::User5Iso) ); }
   }
 }
 
@@ -147,18 +169,25 @@ PatIsolationAnalyzer::beginJob()
   hist1D_["eflowTrack"   ]=fs->make<TH1F>("eflowTrack"   , "Energy Flow (Tracker)"  ,  20,  0.,  1.);
   hist1D_["eflowEcal"    ]=fs->make<TH1F>("eflowEcal"    , "Energy Flow (ECAL)"     ,  20,  0.,  1.);
   hist1D_["eflowHcal"    ]=fs->make<TH1F>("eflowHcal"    , "Energy Flow (HCAL)"     ,  20,  0.,  1.);
+  hist1D_["user4Iso"     ]=fs->make<TH1F>("user4Iso"     , "Isolation (User 4)"     ,  20,  0., 20.);
+  hist1D_["user5Iso"     ]=fs->make<TH1F>("user5Iso"     , "Isolation (User 5)"     ,  25,  0., 50.);
 
   // book 2-dim histograms 
   hist2D_["corrTrackEcal"]=fs->make<TH2F>("corrTrackEcal", "Isolation track vs ecal",  50,  0.,  5.,  50,  0.,  5.);
-  hist2D_["corrTrackHcal"]=fs->make<TH2F>("corrTrackHcal", "Isolation track vs hcal",  50,  0.,  5.,  50,  0.,  5.);
+  hist2D_["corrEcalHcal" ]=fs->make<TH2F>("corrEcalHcal" , "Isolation ecal  vs hcal",  50,  0.,  5.,  50,  0.,  5.);
   hist2D_["corrTrackUser"]=fs->make<TH2F>("corrTrackUser", "Isolation track vs user",  50,  0.,  5.,  50,  0.,  5.);
   hist2D_["corrEcalUser" ]=fs->make<TH2F>("corrEcalUser" , "Isolation ecal  vs user",  50,  0.,  5.,  50,  0.,  5.);
   hist2D_["corrHcalUser" ]=fs->make<TH2F>("corrHcalUser" , "Isolation hcal  vs user",  50,  0.,  5.,  50,  0.,  5.);
+  hist2D_["corrCaloUser1"]=fs->make<TH2F>("corrCaloUser1", "Isolation calo vs user1",  50,  0.,  5.,  50,  0.,  5.);
+  hist2D_["corrCaloUser2"]=fs->make<TH2F>("corrCaloUser2", "Isolation calo vs user2",  50,  0.,  5.,  50,  0.,  5.);
+  hist2D_["corrCaloUser3"]=fs->make<TH2F>("corrCaloUser3", "Isolation calo vs user3",  50,  0.,  5.,  50,  0.,  5.);
 }
 
-void 
-PatIsolationAnalyzer::endJob() 
-{
+void
+PatIsolationAnalyzer::endJob(){
+  hist1D_["eflowTrack"]->Scale(1./hist1D_["norm"]->Integral());  
+  hist1D_["eflowEcal" ]->Scale(1./hist1D_["norm"]->Integral());  
+  hist1D_["eflowHcal" ]->Scale(1./hist1D_["norm"]->Integral());  
 }
 
 void
