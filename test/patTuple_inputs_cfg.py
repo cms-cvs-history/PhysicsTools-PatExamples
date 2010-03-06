@@ -4,41 +4,7 @@
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 # ----------------------------------------------------
-# switch off new tau features introduced in 33X to
-# restore 31X defaults new feaures:
-# - shrinkingConeTaus instead of fixedCone ones
-# - TaNC discriminants attached for shrinkingConeTaus
-# - default preselection on cleaningLayer1
-# ----------------------------------------------------
-from PhysicsTools.PatAlgos.tools.tauTools import *
-switchTo31Xdefaults(process)
-
-# ----------------------------------------------------
-# EXAMPLE 1: run with 31X samples 
-# ----------------------------------------------------
-## uncomment the following line to run on 31X RECO inputs
-#from PhysicsTools.PatAlgos.tools.cmsswVersionTools import *
-#run33xOn31xMC( process,
-#               jetSrc = cms.InputTag("antikt5CaloJets"),
-#               jetIdTag = "antikt5"
-#               )
-#process.source.fileNames = [
-# '/store/relval/CMSSW_3_1_2/RelValTTbar/GEN-SIM-RECO/STARTUP31X_V2-v1/0006/0CC00E3B-5A78-DE11-A2AB-000423D94A04.root'
-#]
-
-## uncomment the following line to run on 31X AOD inputs
-#from PhysicsTools.PatAlgos.tools.cmsswVersionTools import *
-#run33xOn31xMC( process,
-#               jetSrc = cms.InputTag("antikt5CaloJets"),
-#               jetIdTag = "antikt5"
-#               )
-#restrictInputToAOD31X( process )
-#process.source.fileNames = [
-# '/store/mc/Summer09/TTbar/AODSIM/MC_31X_V3_156BxLumiPileUp_AODSIM-v1/0000/0CD4A3C1-328E-DE11-AD09-003048C7584C.root'
-#]
-
-# ----------------------------------------------------
-# EXAMPLE 2: run with CRAFT09 data 
+# EXAMPLE 1: run with CRAFT09 data 
 # ----------------------------------------------------
 #from PhysicsTools.PatAlgos.tools.coreTools import *
 #process.patDefaultSequence.remove(process.makeAllLayer1Jets)
@@ -49,7 +15,7 @@ switchTo31Xdefaults(process)
 #]
 
 # ----------------------------------------------------
-# EXAMPLE 3: run with collison data 
+# EXAMPLE 2: run with collison data 
 # ----------------------------------------------------
 #from PhysicsTools.PatAlgos.tools.coreTools import *
 #removeMCMatching(process, 'All')
