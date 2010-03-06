@@ -18,11 +18,11 @@ compareL3  = comparePatJets.clone(corrLevel="abs", comp="ak5CaloJetsL2L3")
 
 
 ## sequence for Exercise 1(c)
-comparePatAndReco = cms.Sequence(
+doPatAndRecoComparison = cms.Sequence(
     ak5CaloJetsL2   *
     ak5CaloJetsL2L3 *
-    compareRaw +
-    compareL2  +
+    compareRaw      +
+    compareL2       +
     compareL3
 )
    
@@ -40,22 +40,9 @@ calibL7  = analyzePatJets.clone(corrLevel="part:uds")
 doJetResponse = cms.Sequence(
     ak5CaloJetsL2   *
     ak5CaloJetsL2L3 *
-    calibRaw +
-    calibL2  +
-    calibL3  +
-    calibL5  +
+    calibRaw        +
+    calibL2         +
+    calibL3         +
+    calibL5         +
     calibL7
-)
-
-###
-## setup the configuration for Exercise 3
-###
-
-compareJPT    = comparePatJets.clone(comp="cleanPatJetsAK5JPT")
-comparePflow  = comparePatJets.clone(comp="cleanPatJetsAK5PF" )
-
-## sequence for Exercise 3
-compareCaloAndOthers = cms.Sequence(
-    compareJPT  +
-    comparePflow
 )

@@ -12,15 +12,11 @@ process.MessageLogger = cms.Service("MessageLogger")
 process.load("PhysicsTools/PatExamples/PatJetAnalyzer_cff")
 
 process.TFileService = cms.Service("TFileService",
-                                   fileName = cms.string('analyzePatJets.root')
-                                   )
+  fileName = cms.string('analyzePatJets.root')
+)
 
 ## do Exercise 1(c)
-##process.p = cms.Path(process.comparePatAndReco)
+## process.p = cms.Path(process.doPatAndRecoComparison)
 
 ## do Exercise 1(d)
-## process.p = cms.Path(process.doJetResponse)
-
-## do Exercise 3
-process.p = cms.Path(process.compareCaloAndOthers)
-
+process.p = cms.Path(process.doJetResponse)

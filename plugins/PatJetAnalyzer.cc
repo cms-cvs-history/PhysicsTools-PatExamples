@@ -24,13 +24,14 @@ static const float BINS[]={0., 10., 20., 40., 60., 80., 100., 125., 150.};
 
    \brief   module to analyze pat::Jets in the contect of a more complex exercise (detailed below).
 
-   Exercise 1:
+   *Exercise 1:*
 
    (a)
-   Make yourself familiar with the JetCorrFactors module of PAT. Inspect it using the standard 
-   input file you used during the morning session and python in interactive mode (NB: use 
-   python -i myfile_cfg.py). Make sure to understand the use and meaning of the parameters of 
-   the module. Find out where the corresponding cfi file is located within the PatAlgos package.  
+   Make yourself familiar with the jetCorrFactors module of PAT. Inspect it using one of 
+   the configuration files you used during the morning session of Module 1 and python in 
+   interactive mode (NB: python -i myfile_cfg.py). Find out where the corresponding cfi 
+   file is located within the PatAlgos package and make sure you understand the use and 
+   meaning of the parameters of the module.
 
    (b)
    Make sure you understand how to retrieve jets with transvers momentum (pt) at different 
@@ -38,39 +39,41 @@ static const float BINS[]={0., 10., 20., 40., 60., 80., 100., 125., 150.};
 
    (c)
    With the standard ttbar input sample you used during the morning session, compare the pt 
-   of all pat::Jets with the pt of all reco::Jets at the following correction levels of the jet 
-   energy scale (JES): Raw, L2Relative, L3Absolute. Use the most actual corrections for 7 TeV 
-   data.
+   of all pat::Jets with the pt of all reco::Jets at the following correction levels of the 
+   jet energy scale (JES): Raw, L2Relative, L3Absolute. Use the most actual corrections 
+   for 7 TeV data. You may use the PatBasicExample to start from.
 
    (d)
-   With the standard ttbar input sample you used during the morning session make a jet pt 
-   response plot at the following correction levels of the JES: Raw, L2Relative, L3Absolute, 
-   L5Flavor, L7Parton. Use the most actual corrections for 7 TeV data. Choose the L5Flavor and 
-   L7Parton corrections to be determined from a ttbar sample instead of a QCD dijet sample 
-   (which is the default configuration in the standard workflow of PAT). For the response 
-   compare the pat::Jet to the matched generator jet or to a matched parton of status 3. You 
-   may use the PatBasicExample to start from.
-   
-   As an extension you may distinguish between b-jets and light quark jets (based on the pdgId 
-   of the matched status 3 parton) when plotting the jet response.
+   With the standard ttbar input sample you used during the morning session make a plot of 
+   the jet pt response at the following correction levels of the JES: Raw, L2Relative, 
+   L3Absolute, L5Flavor, L7Parton. Use the most actual corrections for 7 TeV data. Choose 
+   the L5Flavor and L7Parton corrections to be determined from a ttbar sample instead of 
+   a QCD dijet sample (which is the default configuration in the standard workflow of PAT). 
+   For the response compare the pat::Jet to the matched generator jet or to a matched parton 
+   of status 3. You may use the PatBasicExample to start from.
+
+   As an extension you may distinguish between b-jets and light quark jets (based on the 
+   pdgId of the matched status 3 parton) when plotting the jet response.
 
 
-   Solution  :
+   *Solution  :*
 
    (c)
    We choose a simple implementation of an EDAnalyzer, which takes the following parameters: 
-    - jets      : input for the pat  jet collection (edm::InputTag).
+    - jets      : input for the pat jet collection (edm::InputTag).
     - comp      : input for an alternative jet collection for comparisons, which can be of 
                   type reco::Jet or pat::Jet (edm::InputTag).
-    - corrLevel : string for the pat jet correction level.
+    - corrLevel : string to determine the pat jet correction level.
    The corrLevel string is expected to be of the form corrType:flavorType. The parameter 
-   comp is optional; it can be omitted in the configuration file if not needed. This is 
-   reflected by two definitions of the module in the corresponding cfi file. We neglect a 
+   comp is optional; it can be omitted in the configuration file if not needed. (This is 
+   reflected by two definitions of the module in the corresponding cfi file.) We neglect a 
    complex parsing to check for allowed concrete substrings for the correction level or 
    correction flavor for the sake of simplicity; the user should take care to give a proper 
    input here. Illegal strings will lead to an edm::Exception of the jet correction service.    
-   In a corresponding cff file this module will be cloned for each correction level as 
-   mentioned in the exercise.
+   In a corresponding cff file this module will be cloned for each correction level required
+   for the exercise. Note that you might have to check the input parameters the corrections 
+   of the JES and for the matching to partons and change them in the configuration file for
+   the production of your patTuple is required.
 
    (d)
    For the sake of simplicity we restrict ourselves to the example of partons. The partons 
@@ -78,9 +81,9 @@ static const float BINS[]={0., 10., 20., 40., 60., 80., 100., 125., 150.};
    fill the basic histograms and the number of bins are defined as static const's outside 
    the class definition. Both, parton and generator jet matching are already provided to 
    best CMS knowledge by the configuration of the pat::Jet (check the configuration of the 
-   patJetPartonMatch and the patJetGenJetMatch module and the WorkBookMCTruthMatch TWiki for 
-   more details). We clone and re-use the module for each correction level mentioned in the 
-   exercise.
+   patJetPartonMatch and the patJetGenJetMatch module and the WorkBookMCTruthMatch TWiki 
+   page for more details). We clone and re-use the module for each correction level required
+   for the exercise.
 */
 
 class PatJetAnalyzer : public edm::EDAnalyzer {
