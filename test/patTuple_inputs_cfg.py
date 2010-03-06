@@ -7,9 +7,8 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 # EXAMPLE 1: run with CRAFT09 data 
 # ----------------------------------------------------
 #from PhysicsTools.PatAlgos.tools.coreTools import *
-#process.patDefaultSequence.remove(process.makeAllLayer1Jets)
 #removeAllPATObjectsBut(process, ['Muons'])
-#removeMCMatching(process, 'Muons')
+#removeMCMatching(process, ['Muons'])
 #process.source.fileNames = [
 # '/store/data/CRAFT09/Cosmics/RECO/multiCosmicMuon-CRAFT09_R_V4_CosmicsSeq_v1/0000/068303DC-80B8-DE11-9110-003048678F62.root'
 #]
@@ -18,7 +17,7 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 # EXAMPLE 2: run with collison data 
 # ----------------------------------------------------
 #from PhysicsTools.PatAlgos.tools.coreTools import *
-#removeMCMatching(process, 'All')
+#removeMCMatching(process, ['All'])
 #process.source.fileNames = [
 # '/store/data/BeamCommissioning09/MinimumBias/RECO/v2/000/122/314/F62B040F-6CD8-DE11-9007-001D09F24664.root',
 # '/store/data/BeamCommissioning09/MinimumBias/RECO/v2/000/122/314/F4387297-74D8-DE11-996C-001D09F24F1F.root',
