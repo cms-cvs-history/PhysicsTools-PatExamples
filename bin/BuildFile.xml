@@ -11,12 +11,5 @@
 <use   name="PhysicsTools/PatExamples"/>
 <use   name="PhysicsTools/FWLite"/>
 <environment>
-  <bin   file="PatBasicFWLiteAnalyzer.cc">
-  </bin>
-  <bin   file="JPsiFWLiteAnalyzer.cc">
-  </bin>
-  <bin   file="PatMcMatchFWLiteAnalyzer.cc">
-  </bin>
-  <bin   file="testSelection_wplusjets.C">
-  </bin>
+  <bin   file="PatBasicFWLiteAnalyzer.cc"></bin>
 </environment>
