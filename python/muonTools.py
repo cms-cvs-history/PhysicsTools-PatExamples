@@ -15,7 +15,7 @@ def addMyUserIsolation(process):
     process.patMuons.userIsolation = cms.PSet(
       tracker = cms.PSet(
           src = cms.InputTag("muIsoDepositTk"),
-          deltaR = cms.double(0.3)
+          deltaR = cms.double(0.4)
       ),
       ecal = cms.PSet(
           src = cms.InputTag("muIsoDepositCalByAssociatorTowers","ecal"),

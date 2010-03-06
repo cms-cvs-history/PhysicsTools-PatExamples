@@ -17,71 +17,75 @@
 
    \brief   module to analyze different kinds of pat::METs in the context of a more complex exercise (detailed below).
 
-   Exercise 2:
+   *Exercise 2:*
 
    (a)
-   Make yourself familiar with the use of the addMuonUserIsolation tool from PAT. Find out where 
-   to find the corresponding cfi file in the PatAlgos package where the tool is defined and have 
-   a look whether you understand what the tool is doing. Change the standard PAT configuration 
-   file to produce a pat tuple, which includes tracker, ECAL and HCAL information for a user-defined 
-   isolation of muons and the corresponding isoDeposits. 
+   Make yourself familiar with the use of the addMuonUserIsolation tool from PAT. Find out where to find the 
+   corresponding python file in the PatAlgos package where the tool is defined and have a look whether you 
+   understand what the tool is doing. Change the standard PAT configuration file to produce a pat tuple, which 
+   includes Tracker, Ecal and Hcal information for a user-defined isolation of muons and the corresponding 
+   isoDeposits. 
 
    (b) 
-   Make sure to understand how this user-defined isolation is accessed from the pat::Muon in 
-   contrast to the standard isolation types as returned by the PAT member functions trackIso(), 
-   ecalIso() and hcalIso(). The technical difference is that the standard isolation from PAT 
-   referes to information that is already stored in the reco object and corresponds to the 
-   official recommendation by the POG(s). 
+   Make sure you understand how this user-defined isolation is accessed from the pat::Muon in contrast to the 
+   standard isolation types as returned by the PAT member functions trackIso(), ecalIso() and hcalIso(). The 
+   technical difference is that the standard isolation from PAT referes to information that is already stored 
+   in the reco::Candidate and to the official recommendation by the corresponding POG. 
 
    (c)
-   With the standard ttbar input sample you used during the morning session of Module 1 compare the 
-   following different kinds of user-defined isolation for muons in 2-dimensional correlation plots: 
+   With the standard ttbar input sample you used during the morning session of Module 1 compare the following 
+   different kinds of user-defined isolation for muons in 2-dimensional correlation plots: 
    - standard tracker isolation from PAT versus user-defined tracker isolation.
    - standard ECAL isolation from PAT versus user-defined ECAL isolation.
    - standard HCAL isolation from PAT versus user-defined HCAL isolation.
    - standard tracker isolation from PAT versus user-defined ECAL isolation.
    - standard tracker isolation from PAT versus user-defined HCAL isolation.
-   (Have a look for the explanation in b to understand what is meant by standard tracker/ECAL/HCAL 
-   isolation from PAT.) Then switch between the different methods how to combine the energy in the 
-   vicinity of the muon, when configuring the user-defined isolation, and check, which is the best 
-   method to use. 
+   (Have a look for the explanation in b to understand what is meant by standard Tracker/Ecal/Hcal isolation 
+   from PAT.) Then switch between the different methods how to combine the energy in the vicinity of the muon, 
+   when configuring the user-defined isolation, and check, which is the best method to use. For Tracker isolation 
+   you should try the following changes: 
+   - change deltaR cone from 0.3 to 0.4.
+   - change the mode from sum to max.
+   - change the mode from sum to sum2.
+   Note that you might need to replace the userIsolation PSet by a self-defined PSet. Using the standard tool 
+   will not help you here. You will need to do the configration of the userIsolations during the production 
+   of your patTuple.  
    
    (d)
-   With the standard ttbar input sample you used during the morning session of Module 1 make a plot 
-   of the energy/pt flow in the vicinity of the muon from isoDeposits. As an extra you might want 
-   to distinguish between different decay channels of the generated ttbar pair, to see the difference 
-   between isolated and non-isolated muons in the energy/pt flow. (what is your expectation?) 
+   With the standard ttbar input sample you used during the morning session of Module 1 make a plot of the 
+   energy/pt flow in the vicinity of the muon from isoDeposits. As an extra you might want to distinguish 
+   between different decay channels of the generated ttbar pair, to see the difference between isolated and 
+   non-isolated muons in the energy/pt flow. 
    
    (e)
-   Extend the user-defined isolation of c by your own type isolation for muons making use of the 
-   energy desposits in the HO or the energy deposited in the detector by jets (an unusual way of 
-   formulating a minimal distance between the closest jet and the muon) and extend the plots of 
-   c correspondingly. 
+   Extend the user-defined isolation of c by your own type isolation for muons making use of the energy 
+   desposits in the HO or the energy deposited in the detector by jets (an unusual way of formulating a 
+   minimal distance between the closest jet and the muon) and extend the plots of c correspondingly. 
 
 
-   Solution  :
+   *Solution  :*
 
    (c)
-   We choose the muons as leptons to check the isolation variables. The analyzer only need on para-
-   meter (edm::InputTag muons). Different kinds of standard and user-defined isolations are inspected 
-   and compared (if available). Note that the user-defined isolations must be configured beforehand 
-   during the patTuple production steps. You can use a standard tool for the configuration of pre 
-   defined userIsolations for tracker, ecal and hcal. You can also use a new tool to add even more 
-   idividually defined isolation variables. Note that you can NOT concatenate these tools, as the 
-   edm::ParameterSet for userIsolation must be replaced as a whole. 
+   We choose the muon to check the isolation variables and a simple EDAnalyzer, which only needs one para-
+   meter (edm::InputTag muons). User-defined isolations for Tracker/Ecal/Hcal are expected. Other kinds of 
+   user-defined isolations are optional. Note that the user-defined isolations must be configured beforehand 
+   during the patTuple production steps. You can use a standard tool for the configuration of pre-defined 
+   userIsolations for Tracker, Ecal and Hcal. You can also use an own configuration to add even more 
+   individually defined isolation variables. This will be necessary for the exercises. Note that you can 
+   NOT concatenate these tools, as the edm::ParameterSet for userIsolation must be replaced as a whole. 
 
    (d)
-   We use the isoDeposits to fill the energy/pt flow as a function of the distance R from the muon. 
-   The energy is plotted differentially, in rings of deltaR. At the end each of the plots is normalized 
-   to the number of muons, thus representing the mean energy in each ring of deltaR around the muon. 
-   In an extension you could split the sample for isolated muons from W decays and non isolated muons
-   within jets to see the difference in enegy/pt flow. For the sake of simplicity this step is omitted
-   here.
+   We use the isoDeposits to fill the energy/pt flow as a function of the distance R from the muon. The 
+   energy is plotted differentially, in rings of deltaR. At the end of the run each of the plots is 
+   normalized to the number of muons, thus representing the mean energy per muon in each ring of deltaR 
+   around the muon. In an extension you could split the sample for isolated muons from W decays and non 
+   isolated muons within jets to see the difference in enegy/pt flow. For the sake of simplicity this 
+   step is omitted here.
 
    (e)
-   For this exercise we added a new tool for a completely user-defined userIsolation PSet, which 
-   includes th pre-defined userIsolations for tracker, ecal and hcal and five additional definitions
-   of isolation variables. 
+   For this exercise we added a new tool for a completely user-defined userIsolation PSet, which includes 
+   the pre-defined userIsolations for Tracker/Ecal/Hcal (with slightly modified values for deltaR, when 
+   compared to the POG recommendation), and five additional definitions of isolation variables. 
 */
 
 class PatIsolationAnalyzer : public edm::EDAnalyzer {

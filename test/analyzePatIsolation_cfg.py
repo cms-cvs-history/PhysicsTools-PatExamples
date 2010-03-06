@@ -12,8 +12,8 @@ process.MessageLogger = cms.Service("MessageLogger")
 process.load("PhysicsTools/PatExamples/PatIsolationAnalyzer_cfi")
 
 process.TFileService = cms.Service("TFileService",
-                                   fileName = cms.string('analyzePatIsolation.root')
-                                   )
+  fileName = cms.string('analyzePatIsolation.root')
+)
 
 ## do Exercise 3
 process.p = cms.Path(process.analyzePatIsolation)
