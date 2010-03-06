@@ -24,63 +24,32 @@ static const float BINS[]={0., 10., 20., 40., 60., 80., 100., 125., 150.};
 
    \brief   module to analyze pat::Jets in the contect of a more complex exercise (detailed below).
 
-   Exercise 1:
+   *Exercise 3:*
 
    (a)
-   Make yourself familiar with the JetCorrFactors module of PAT. Inspect it using the standard 
-   input file you used during the morning session and python in interactive mode (NB: use 
-   python -i myfile_cfg.py). Make sure to understand the use and meaning of the parameters of 
-   the module. Find out where the corresponding cfi file is located within the PatAlgos package.  
+   Make yourself familiar with the use of the addJetCollection tool and the tools to add additional 
+   MET collection the the PAT event content. Find out where to find the corresponding python file in 
+   the PatAlgos package where the tools are defined and have a look whether you understand what the 
+   tools are doing. Change the standard PAT configuration file to produce a pat tuple, which includes 
+   ak5 particle flow jets and ak5 JPT jets, as well as particle flow MET and (track corrected) tcMET 
+   in addition to the standard jet and MET collections. Attention: Make sure beforehand which features 
+   of the jet collections you need and, which make sense at all (this is NOT taken over by the tool 
+   for you).
 
-   (b)
-   Make sure you understand how to retrieve jets with transvers momentum (pt) at different 
-   correction levels of the jet energy scale (JES) from a pat::Jet. 
-
-   (c)
-   With the standard ttbar input sample you used during the morning session, compare the pt 
-   of all pat::Jets with the pt of all reco::Jets at the following correction levels of the jet 
-   energy scale (JES): Raw, L2Relative, L3Absolute. Use the most actual corrections for 7 TeV 
-   data.
-
-   (d)
-   With the standard ttbar input sample you used during the morning session make a jet pt 
-   response plot at the following correction levels of the JES: Raw, L2Relative, L3Absolute, 
-   L5Flavor, L7Parton. Use the most actual corrections for 7 TeV data. Choose the L5Flavor and 
-   L7Parton corrections to be determined from a ttbar sample instead of a QCD dijet sample 
-   (which is the default configuration in the standard workflow of PAT). For the response 
-   compare the pat::Jet to the matched generator jet or to a matched parton of status 3. You 
-   may use the PatBasicExample to start from.
-   
-   As an extension you may distinguish between b-jets and light quark jets (based on the pdgId 
-   of the matched status 3 parton) when plotting the jet response.
+   (b) 
+   With the standard ttbar input sample you used during the morning session of Module 1 extend 
+   Exercise 1 to do the following: Compare calorimeter jets (corrected up to L3Absolute) with 
+   particle flow jets and JPT jets in 2 dimensional plots of pt, eta and phi of all jets. Compare 
+   the resolution plots for calorimeter MET, particle flow MET and (track corrected) tcMET in one 
+   histogram.
 
 
-   Solution  :
+   *Solution  :*
 
-   (c)
-   We choose a simple implementation of an EDAnalyzer, which takes the following parameters: 
-    - jets      : input for the pat  jet collection (edm::InputTag).
-    - comp      : input for an alternative jet collection for comparisons, which can be of 
-                  type reco::Jet or pat::Jet (edm::InputTag).
-    - corrLevel : string for the pat jet correction level.
-   The corrLevel string is expected to be of the form corrType:flavorType. The parameter 
-   comp is optional; it can be omitted in the configuration file if not needed. This is 
-   reflected by two definitions of the module in the corresponding cfi file. We neglect a 
-   complex parsing to check for allowed concrete substrings for the correction level or 
-   correction flavor for the sake of simplicity; the user should take care to give a proper 
-   input here. Illegal strings will lead to an edm::Exception of the jet correction service.    
-   In a corresponding cff file this module will be cloned for each correction level as 
-   mentioned in the exercise.
-
-   (d)
-   For the sake of simplicity we restrict ourselves to the example of partons. The partons 
-   are restricted to quarks (with masses below the top quark) only. A variable binning to 
-   fill the basic histograms and the number of bins are defined as static const's outside 
-   the class definition. Both, parton and generator jet matching are already provided to 
-   best CMS knowledge by the configuration of the pat::Jet (check the configuration of the 
-   patJetPartonMatch and the patJetGenJetMatch module and the WorkBookMCTruthMatch TWiki for 
-   more details). We clone and re-use the module for each correction level mentioned in the 
-   exercise.
+   there is nothing to be done here. due to the abstract structure of the analyzer. Everything can 
+   be done on the configuration file level. For the parts of the Exercise that concern MET we create
+   a new very simple EDAnalyzer. So we keep the transparency of the modules and do not mix up 
+   different tasks on different collections. 
 */
 
 class PatJetAnalyzer : public edm::EDAnalyzer {

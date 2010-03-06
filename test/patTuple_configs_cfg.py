@@ -1,6 +1,6 @@
 # This is an example PAT configuration showing the usage of PAT on full sim samples
 
-# Starting with a skeleton process which gets imported with the following line
+# starting with a skeleton process which gets imported with the following line
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 # uncomment the following section for Exercise 3

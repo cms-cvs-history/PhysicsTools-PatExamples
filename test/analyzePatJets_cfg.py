@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-process = cms.Process("Exercise1")
+process = cms.Process("Exercise3")
 
 process.source = cms.Source("PoolSource",
   fileNames = cms.untracked.vstring(
@@ -12,15 +12,9 @@ process.MessageLogger = cms.Service("MessageLogger")
 process.load("PhysicsTools/PatExamples/PatJetAnalyzer_cff")
 
 process.TFileService = cms.Service("TFileService",
-                                   fileName = cms.string('analyzePatJets.root')
-                                   )
-
-## do Exercise 1(c)
-##process.p = cms.Path(process.comparePatAndReco)
-
-## do Exercise 1(d)
-## process.p = cms.Path(process.doJetResponse)
+  fileName = cms.string('analyzePatJets.root')
+)
 
 ## do Exercise 3
-process.p = cms.Path(process.compareCaloAndOthers)
+process.p = cms.Path(process.doCaloAndOthersComparison)
 

@@ -11,7 +11,7 @@ comparePF = analyzePatMETs.clone(comp="patMETsPF")
 compareTC = analyzePatMETs.clone(comp="patMETsTC")
 
 ## sequence for Exercise 3
-comparePatMETs = cms.Sequence(
+doPatMETsComparison = cms.Sequence(
     comparePF +
     compareTC
 )
