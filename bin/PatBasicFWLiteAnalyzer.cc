@@ -10,10 +10,10 @@
 #include <TFile.h>
 #include <TSystem.h>
 
-#include "DataFormats/FWLite/interface/Handle.h"
+#include "DataFormats/Common/interface/Handle.h"
+#include "DataFormats/FWLite/interface/Event.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "FWCore/FWLite/interface/AutoLibraryLoader.h"
-
 
 int main(int argc, char* argv[]) 
 {
@@ -48,8 +48,10 @@ int main(int argc, char* argv[])
 
   // loop the events
   unsigned int iEvent=0;
-  fwlite::Event event(inFile);
-  for(event.toBegin(); !event.atEnd(); ++event, ++iEvent){
+  fwlite::Event ev(inFile);
+  for(ev.toBegin(); !ev.atEnd(); ++ev, ++iEvent){
+    edm::EventBase const & event = ev;
+
     // break loop after end of file is reached 
     // or after 1000 events have been processed
     if( iEvent==1000 ) break;
@@ -59,9 +61,10 @@ int main(int argc, char* argv[])
       std::cout << "  processing event: " << iEvent << std::endl;
     }
 
-    // fwlite::Handle to to muon collection
-    fwlite::Handle<std::vector<pat::Muon> > muons;
-    muons.getByLabel(event, "cleanPatMuons");
+    // Handle to the muon collection
+    edm::Handle<std::vector<pat::Muon> > muons;
+    edm::InputTag muonLabel("cleanPatMuons");
+    event.getByLabel(muonLabel, muons);
     
     // loop muon collection and fill histograms
     for(unsigned i=0; i<muons->size(); ++i){
