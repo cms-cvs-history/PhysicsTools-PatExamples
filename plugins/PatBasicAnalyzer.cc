@@ -33,7 +33,6 @@ private:
   /// pt of the overlaping electron relative to jet pt
   TH1F* elecOverJetPt_;
 
-
   // input tags  
   edm::InputTag photonSrc_;
   edm::InputTag elecSrc_;
@@ -108,7 +107,14 @@ PatBasicAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
   histContainer_["taus" ]->Fill(taus->size()  );
   histContainer_["met"  ]->Fill(mets->empty() ? 0 : (*mets)[0].et());
 
+  // -----------------------------------------
+  // Section 1: Show the effect of cleaning 
+  //            per reference 
   //
+  // (uncomment these lines to see how you can 
+  // deal with overlap relations as defined 
+  // during patTuple 
+  // -----------------------------------------
   for(edm::View<pat::Jet>::const_iterator jet=jets->begin(); jet!=jets->end(); ++jet){
     const reco::CandidatePtrVector& overlapElectrons=jet->overlaps("electrons");
     elecMult_->Fill(overlapElectrons.size());
