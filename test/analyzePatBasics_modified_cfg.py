@@ -14,17 +14,17 @@ process.MessageLogger = cms.Service("MessageLogger")
 #process.load("PhysicsTools/PatExamples/PatBasicAnalyzer_cfi")
 ## using import and making the module known to the process afterwards
 from PhysicsTools.PatExamples.PatBasicAnalyzer_cfi import analyzeBasicPat
-process.analyzeBasicPat = analyzeBasicPat
+process.cleanPatJets = analyzeBasicPat
 
 ## cloning an existing module
-process.analyzeBasicPat2= analyzeBasicPat.clone()
+process.selectedPatJets = analyzeBasicPat.clone(jetSrc="selectedPatJets")
 
 process.TFileService = cms.Service("TFileService",
   fileName = cms.string('analyzePatBasics.root')
 )
 
 process.p = cms.Path(
-    process.analyzeBasicPat *
-    process.analyzeBasicPat2
+    process.cleanPatJets *
+    process.selectedPatJets
 )
 

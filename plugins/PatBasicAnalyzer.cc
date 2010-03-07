@@ -26,6 +26,13 @@ private:
   // histograms are booked in the beginJob() 
   // method
   std::map<std::string,TH1F*> histContainer_; 
+  /// number of electrons that overlap with jets
+  TH1F* elecMult_;
+  /// number of id'ed electrons that overlap with jets
+  TH1F* eidMult_;
+  /// pt of the overlaping electron relative to jet pt
+  TH1F* elecOverJetPt_;
+
 
   // input tags  
   edm::InputTag photonSrc_;
@@ -100,6 +107,19 @@ PatBasicAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
   histContainer_["muons"]->Fill(muons->size() );
   histContainer_["taus" ]->Fill(taus->size()  );
   histContainer_["met"  ]->Fill(mets->empty() ? 0 : (*mets)[0].et());
+
+  //
+  for(edm::View<pat::Jet>::const_iterator jet=jets->begin(); jet!=jets->end(); ++jet){
+    const reco::CandidatePtrVector& overlapElectrons=jet->overlaps("electrons");
+    elecMult_->Fill(overlapElectrons.size());
+    unsigned int eid=0;
+    for(unsigned int i=0; i<overlapElectrons.size(); ++i){
+      const pat::Electron* patElectron = dynamic_cast<const pat::Electron*>(&*overlapElectrons[i]);
+      if(patElectron){ if(patElectron->electronID("eidRobustTight")>0.99) ++eid; }
+      elecOverJetPt_->Fill(overlapElectrons[i]->pt()/jet->pt());
+    }
+    eidMult_->Fill(eid);
+  }
 }
 
 void 
@@ -115,6 +135,12 @@ PatBasicAnalyzer::beginJob()
   histContainer_["taus"   ]=fs->make<TH1F>("taus",    "tau multiplicity",      10, 0,  10);
   histContainer_["jets"   ]=fs->make<TH1F>("jets",    "jet multiplicity",      10, 0,  10);
   histContainer_["met"    ]=fs->make<TH1F>("met",     "missing E_{T}",         20, 0, 100);
+
+  // these are booked for special demonstration reasons during the tutorial
+  elecMult_     = fs->make<TH1F>("elecMult"     , "overlaping electrons"         ,   10,   0,  10); 
+  eidMult_      = fs->make<TH1F>("eidMult"      , "overlaping electrons (id'ed)" ,   10,   0,  10); 
+  elecOverJetPt_= fs->make<TH1F>("elecOverJetPt", "pt(electron)/pt(jet)"         ,   20,  0.,  1.); 
+
 }
 
 void 
