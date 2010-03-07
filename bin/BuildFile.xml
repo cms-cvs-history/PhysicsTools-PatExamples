@@ -11,5 +11,6 @@
 <use   name="PhysicsTools/PatExamples"/>
 <use   name="PhysicsTools/FWLite"/>
 <environment>
-  <bin   file="PatBasicFWLiteAnalyzer.cc"></bin>
+  <bin file="PatBasicFWLiteAnalyzer.cc"></bin>
+  <bin file="PatMcMatchFWLiteAnalyzer.cc"> </bin> <!--Added for the new file. -->
 </environment>
