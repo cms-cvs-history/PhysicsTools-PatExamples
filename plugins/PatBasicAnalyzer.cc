@@ -26,8 +26,13 @@ private:
   // histograms are booked in the beginJob() 
   // method
   std::map<std::string,TH1F*> histContainer_; 
-  // plot number of towers per jet
+  /// plot number of towers per jet (this is an extra plot, 
+  /// when demonstrating the effect of embedding event info)
   TH1F* jetTowers_;
+  /// Number of hist on the reconstructed track (this is an 
+  /// extra plot, when demonstrating the effect of embedding 
+  /// event information)
+  TH1F* elecNHits_;
 
   // input tags  
   edm::InputTag photonSrc_;
@@ -93,9 +98,6 @@ PatBasicAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
     if(jet->pt()>50){
       ++nJets;
     }
-    // uncomment the following line to fill the 
-    // jetTowers_ histogram
-    // jetTowers_->Fill(jet->getCaloConstituents().size());
   }
   histContainer_["jets"]->Fill(nJets);
 
@@ -105,6 +107,28 @@ PatBasicAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
   histContainer_["muons"]->Fill(muons->size() );
   histContainer_["taus" ]->Fill(taus->size()  );
   histContainer_["met"  ]->Fill(mets->empty() ? 0 : (*mets)[0].et());
+
+  // -----------------------------------------
+  // Section 1: Show the effect of embedding 
+  //            event information for jetss
+  //
+  // (uncomment these lines for fill the 
+  // jetTowers_ histogram)
+  // -----------------------------------------
+  //for(edm::View<pat::Jet>::const_iterator jet=jets->begin(); jet!=jets->end(); ++jet){
+  //  jetTowers_->Fill(jet->getCaloConstituents().size());
+  //}
+
+  // -----------------------------------------
+  // Section 2: Show the effect of embedding 
+  //            event information for electrons
+  //
+  // (uncomment these lines for fill the 
+  // elecNHit histogram)
+  // -----------------------------------------
+  //for(edm::View<pat::Electron>::const_iterator elec=electrons->begin(); elec!=electrons->end(); ++elec){
+  //  elecNHits_->Fill(elec->gsfTrack()->numberOfLostHits());
+  //}
 }
 
 void 
@@ -114,13 +138,17 @@ PatBasicAnalyzer::beginJob()
   edm::Service<TFileService> fs;
   
   // book histograms:
-  jetTowers_= fs->make<TH1F>("jetTowers", "towers per jet",   90, 0,  90); 
   histContainer_["photons"]=fs->make<TH1F>("photons", "photon multiplicity",   10, 0,  10);
   histContainer_["elecs"  ]=fs->make<TH1F>("elecs",   "electron multiplicity", 10, 0,  10);
   histContainer_["muons"  ]=fs->make<TH1F>("muons",   "muon multiplicity",     10, 0,  10);
   histContainer_["taus"   ]=fs->make<TH1F>("taus",    "tau multiplicity",      10, 0,  10);
   histContainer_["jets"   ]=fs->make<TH1F>("jets",    "jet multiplicity",      10, 0,  10);
   histContainer_["met"    ]=fs->make<TH1F>("met",     "missing E_{T}",         20, 0, 100);
+
+  // these are booked for special demonstration reasons during the tutorial
+  jetTowers_= fs->make<TH1F>("jetTowers", "towers per jet",   90, 0,  90); 
+  elecNHits_= fs->make<TH1F>("elecNHits", "lost hits per track",   20, 0,  20); 
+
 }
 
 void 

@@ -4,16 +4,6 @@
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 # ----------------------------------------------------
-# switch off new tau features introduced in 33X to
-# restore 31X defaults new feaures:
-# - shrinkingConeTaus instead of fixedCone ones
-# - TaNC discriminants attached for shrinkingConeTaus
-# - default preselection on cleaningLayer1
-# ----------------------------------------------------
-from PhysicsTools.PatAlgos.tools.tauTools import *
-switchTo31Xdefaults(process)
-
-# ----------------------------------------------------
 # EXERCISE 1: embedding of calo towers in jets
 # ----------------------------------------------------
 ## add calo towers to the event content
@@ -21,18 +11,18 @@ switchTo31Xdefaults(process)
 
 ## drop calo towers but embed those, which belong to
 ## jets
-#process.allLayer1Jets.embedCaloTowers = True
+#process.patJets.embedCaloTowers = True
 
 
 # ----------------------------------------------------
 # EXERCISE 2: embedding of tracks in electrons
 # ----------------------------------------------------
-## add general tracks to the event content (have fun with it trying w/o embedding ;-))
+## add general tracks to the event content
 #process.out.outputCommands += ["keep *_electronGsfTracks_*_*", "keep *_gsfElectron*_*_*"]
 
 ## drop general tracks but embed the track, which belongs
 ## to the electrons
-#process.allLayer1Electrons.embedGsfTrack = False
+#process.patElectrons.embedGsfTrack = False
 
 # let it run
 process.p = cms.Path(
