@@ -26,8 +26,6 @@ private:
   // histograms are booked in the beginJob() 
   // method
   std::map<std::string,TH1F*> histContainer_; 
-  // plot number of towers per jet
-  TH1F* jetTowers_;
 
   // input tags  
   edm::InputTag photonSrc_;
@@ -93,9 +91,6 @@ PatBasicAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetu
     if(jet->pt()>50){
       ++nJets;
     }
-    // uncomment the following line to fill the 
-    // jetTowers_ histogram
-    // jetTowers_->Fill(jet->getCaloConstituents().size());
   }
   histContainer_["jets"]->Fill(nJets);
 
@@ -114,7 +109,6 @@ PatBasicAnalyzer::beginJob()
   edm::Service<TFileService> fs;
   
   // book histograms:
-  jetTowers_= fs->make<TH1F>("jetTowers", "towers per jet",   90, 0,  90); 
   histContainer_["photons"]=fs->make<TH1F>("photons", "photon multiplicity",   10, 0,  10);
   histContainer_["elecs"  ]=fs->make<TH1F>("elecs",   "electron multiplicity", 10, 0,  10);
   histContainer_["muons"  ]=fs->make<TH1F>("muons",   "muon multiplicity",     10, 0,  10);

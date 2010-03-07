@@ -21,7 +21,7 @@ analyzePatElectron = cms.EDAnalyzer("PatElectronAnalyzer",
     electronID = cms.string('none'),                                    
                                     
     ## input collection for electrons
-    electronSrc  = cms.InputTag("selectedLayer1Electrons"),
+    electronSrc  = cms.InputTag("selectedPatElectrons"),
     ## input collection for generator particles
     particleSrc  = cms.InputTag("genParticles"),
                                     
