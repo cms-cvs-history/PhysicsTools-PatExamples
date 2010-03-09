@@ -4,20 +4,14 @@
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 # ----------------------------------------------------
-# EXAMPLE 1: restrict input to AOD
-# ----------------------------------------------------
-#from PhysicsTools.PatAlgos.tools.coreTools import *
-#restrictInputToAOD(process)
-
-# ----------------------------------------------------
-# EXAMPLE 2: remove MC matching from PAT default
+# EXAMPLE 1: remove MC matching from PAT default
 #            sequences
 # ----------------------------------------------------
 #from PhysicsTools.PatAlgos.tools.coreTools import *
 #removeMCMatching(process, ['All'])
 
 # ----------------------------------------------------
-# EXAMPLE 3: remove certain object collections from
+# EXAMPLE 2: remove certain object collections from
 #            the PAT workflow
 # ----------------------------------------------------
 #from PhysicsTools.PatAlgos.tools.coreTools import *

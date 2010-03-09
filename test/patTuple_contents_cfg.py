@@ -4,28 +4,28 @@
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 # ----------------------------------------------------
-# EXAMPLE 1: change the pat jet collection in the 
-#            event content
+# EXERCISE 1: change the pat jet collection in the 
+#             event content
 # ----------------------------------------------------
 #from PhysicsTools.PatAlgos.tools.jetTools import *
 #switchJetCollection(process, 
-#                    cms.InputTag('sisCone5CaloJets'),   
-#                    doJTA            = True,            
-#                    doBTagging       = True,            
-#                    jetCorrLabel     = ('SC5','Calo'),  
-#                    doType1MET       = True,            
-#                    genJetCollection = cms.InputTag("sisCone5GenJets"),
-#                    doJetID          = True,
-#                    jetIdLabel       = "sc5"
-#                    ) 
+#                   cms.InputTag('sisCone5CaloJets'),   
+#                   doJTA            = True,            
+#                   doBTagging       = True,            
+#                   jetCorrLabel     = ('SC5','Calo'),  
+#                   doType1MET       = True,            
+#                   genJetCollection = cms.InputTag("sisCone5GenJets"),
+#                   doJetID          = True,
+#                   jetIdLabel       = "sc5"
+#                   ) 
 
 # ----------------------------------------------------
-# EXAMPLE 2: add more jet collections to the pat
-#            event content
+# EXERCISE 2: add more jet collections to the pat
+#             event content
 # ----------------------------------------------------
 #from PhysicsTools.PatAlgos.tools.jetTools import *
 #addJetCollection(process,cms.InputTag('ak7CaloJets'),
-#                 'AK7', 'Calo',
+#                 'AK7','Calo',
 #                 doJTA        = True,
 #                 doBTagging   = False,
 #                 jetCorrLabel = None,
@@ -37,7 +37,7 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 #                 jetIdLabel   = "ak7"
 #                 )
 #addJetCollection(process,cms.InputTag('iterativeCone5CaloJets'),
-#                 'IC5', 'Calo',
+#                 'IC5','Calo',
 #                 doJTA        = True,
 #                 doBTagging   = True,
 #                 jetCorrLabel = ('IC5', 'Calo'),
@@ -49,22 +49,16 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 #                 )
 
 # ----------------------------------------------------
-# EXAMPLE 3: add different kinds of MET to the event
-#            content
+# EXERCISE 3: add different kinds of MET to the event
+#             content
 # ----------------------------------------------------
 #from PhysicsTools.PatAlgos.tools.metTools import *
 #addTcMET(process, 'TC')
 #addPfMET(process, 'PF')
 
 # ----------------------------------------------------
-# EXAMPLE 4: switch to different standard ouputs of
-#            the pat tuple
+# EXERCISE 4: add AODExtras to the event content
 # ----------------------------------------------------
-## switched from cleanLayer1Candidates to selectedLayer1Candidates
-#from PhysicsTools.PatAlgos.tools.coreTools import removeCleaning
-#removeCleaning(process)
-
-## add AODExtras to the event content
 #from PhysicsTools.PatAlgos.patEventContent_cff import patExtraAodEventContent
 #process.out.outputCommands+= patExtraAodEventContent 
 
