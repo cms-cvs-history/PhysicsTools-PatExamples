@@ -79,13 +79,10 @@ readFiles = cms.untracked.vstring()
 secFiles = cms.untracked.vstring()
 
 readFiles.extend( [
-       '/store/mc/Summer09/MinBias/GEN-SIM-RECO/START3X_V25_preproduction-v2/0026/FEDECD35-302C-DF11-AB36-0018F3D095EC.root',
-       '/store/mc/Summer09/MinBias/GEN-SIM-RECO/START3X_V25_preproduction-v2/0026/FE4BD102-2F2C-DF11-8153-002354EF3BDB.root',
-       '/store/mc/Summer09/MinBias/GEN-SIM-RECO/START3X_V25_preproduction-v2/0026/FC0049EC-2E2C-DF11-A722-001A92971AA8.root',
-       '/store/mc/Summer09/MinBias/GEN-SIM-RECO/START3X_V25_preproduction-v2/0026/FAC2E7F6-2E2C-DF11-9D47-001A92971B38.root',
-       '/store/mc/Summer09/MinBias/GEN-SIM-RECO/START3X_V25_preproduction-v2/0026/FAB0E50E-302C-DF11-9B9F-0018F3D0965A.root',
-       '/store/mc/Summer09/MinBias/GEN-SIM-RECO/START3X_V25_preproduction-v2/0026/FA17E007-302C-DF11-A4B6-001A92810ADE.root',
-       '/store/mc/Summer09/MinBias/GEN-SIM-RECO/START3X_V25_preproduction-v2/0026/F848F40A-302C-DF11-8E27-001731AF68ED.root'
+       '/store/mc/Spring10/MinBias/GEN-SIM-RECO/START3X_V25_354p1ReReco-v1/0000/FEAECF89-6E3B-DF11-93F5-00304867D446.root',
+       '/store/mc/Spring10/MinBias/GEN-SIM-RECO/START3X_V25_354p1ReReco-v1/0000/FE816A82-583B-DF11-88A3-003048679084.root',
+       '/store/mc/Spring10/MinBias/GEN-SIM-RECO/START3X_V25_354p1ReReco-v1/0000/FE2A3A45-683B-DF11-9769-002354EF3BE0.root',
+       '/store/mc/Spring10/MinBias/GEN-SIM-RECO/START3X_V25_354p1ReReco-v1/0000/FE283BA9-643B-DF11-BB70-0018F3D095EA.root'
         ] );
 process.source.fileNames = readFiles
 
