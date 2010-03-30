@@ -25,7 +25,7 @@ process.plotParameters = cms.PSet (
 
 process.inputs = cms.PSet (
     fileNames = cms.vstring(
-        'reco_7TeV_firstdata_mc_354_pat.root'
+        'reco_7TeV_firstdata_356_pat.root'
         )
 )
 
