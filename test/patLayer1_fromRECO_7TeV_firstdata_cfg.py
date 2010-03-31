@@ -71,8 +71,8 @@ process.primaryVertexFilter = cms.EDFilter("GoodVertexFilter",
                                            )
 
 # Select jets
-process.selectedPatJets.cut = cms.string('pt > 10 & abs(eta) < 3.0')
-process.selectedPatJetsAK5PF.cut = cms.string('pt > 8 & abs(eta) < 3.0')
+process.selectedPatJets.cut = cms.string('pt > 2 & abs(eta) < 3.0')
+process.selectedPatJetsAK5PF.cut = cms.string('pt > 2 & abs(eta) < 3.0')
 
 
 # Add the files 
