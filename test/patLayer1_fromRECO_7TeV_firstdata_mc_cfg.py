@@ -6,7 +6,7 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 from PhysicsTools.PatAlgos.tools.coreTools import *
 
 ## global tag for data
-process.GlobalTag.globaltag = cms.string('START3X_V25::All')
+process.GlobalTag.globaltag = cms.string('START3X_V25B::All')
 
 # turn off MC matching for the process
 #removeMCMatching(process, ['All'])
@@ -70,8 +70,8 @@ process.primaryVertexFilter = cms.EDFilter("GoodVertexFilter",
                                            )
 
 # Select jets
-process.selectedPatJets.cut = cms.string('pt > 10 & abs(eta) < 3.0')
-process.selectedPatJetsAK5PF.cut = cms.string('pt > 8 & abs(eta) < 3.0')
+process.selectedPatJets.cut = cms.string('pt > 2 & abs(eta) < 3.0')
+process.selectedPatJetsAK5PF.cut = cms.string('pt > 2 & abs(eta) < 3.0')
 
 
 # Add the files 
@@ -79,10 +79,11 @@ readFiles = cms.untracked.vstring()
 secFiles = cms.untracked.vstring()
 
 readFiles.extend( [
-       '/store/mc/Spring10/MinBias/GEN-SIM-RECO/START3X_V25_354p1ReReco-v1/0000/FEAECF89-6E3B-DF11-93F5-00304867D446.root',
-       '/store/mc/Spring10/MinBias/GEN-SIM-RECO/START3X_V25_354p1ReReco-v1/0000/FE816A82-583B-DF11-88A3-003048679084.root',
-       '/store/mc/Spring10/MinBias/GEN-SIM-RECO/START3X_V25_354p1ReReco-v1/0000/FE2A3A45-683B-DF11-9769-002354EF3BE0.root',
-       '/store/mc/Spring10/MinBias/GEN-SIM-RECO/START3X_V25_354p1ReReco-v1/0000/FE283BA9-643B-DF11-BB70-0018F3D095EA.root'
+'/store/mc/Spring10/MinBias/GEN-SIM-RECO/START3X_V25B_356ReReco-v1/0007/FCDD5B7A-233C-DF11-AB79-002618943926.root',
+'/store/mc/Spring10/MinBias/GEN-SIM-RECO/START3X_V25B_356ReReco-v1/0007/FC5FDFDD-233C-DF11-9FC5-002618943964.root',
+'/store/mc/Spring10/MinBias/GEN-SIM-RECO/START3X_V25B_356ReReco-v1/0007/FA77A575-233C-DF11-9D9A-00248C55CC62.root',
+'/store/mc/Spring10/MinBias/GEN-SIM-RECO/START3X_V25B_356ReReco-v1/0007/FA7205B6-233C-DF11-9BC2-002618943932.root',
+'/store/mc/Spring10/MinBias/GEN-SIM-RECO/START3X_V25B_356ReReco-v1/0007/F850EA9F-233C-DF11-8D05-00261894383C.root'
         ] );
 process.source.fileNames = readFiles
 
@@ -96,7 +97,7 @@ process.p = cms.Path(
     )
 
 # rename output file
-process.out.fileName = cms.untracked.string('reco_7TeV_firstdata_mc_354_pat.root')
+process.out.fileName = cms.untracked.string('reco_7TeV_firstdata_mc_356_pat.root')
 
 # reduce verbosity
 process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
