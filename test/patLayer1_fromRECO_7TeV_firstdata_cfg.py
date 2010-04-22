@@ -40,9 +40,8 @@ addJetCollection(process,cms.InputTag('ak5PFJets'),
                  )
 
 # require physics declared
-process.physDecl = cms.EDFilter("PhysDecl",
-    applyfilter = cms.untracked.bool(True)
-)
+process.load('HLTrigger.special.hltPhysicsDeclared_cfi')
+process.hltPhysicsDeclared.L1GtReadoutRecordTag = 'gtDigis'
 
 # require scraping filter
 process.scrapingVeto = cms.EDFilter("FilterOutScraping",
@@ -80,25 +79,46 @@ readFiles = cms.untracked.vstring()
 secFiles = cms.untracked.vstring()
 
 readFiles.extend( [
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/F4C92A98-163C-DF11-9788-0030487C7392.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/F427D642-173C-DF11-A909-0030487C60AE.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/E27821C3-0C3C-DF11-9BD9-0030487CD718.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/D87D5469-2E3C-DF11-A470-000423D99896.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/B647CAD9-0E3C-DF11-886F-0030487CD716.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/A860D55E-193C-DF11-BE29-0030487C60AE.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/9884BC11-0C3C-DF11-8F9C-000423D986C4.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/92684831-233C-DF11-ABA0-0030487CD16E.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/90269E76-0D3C-DF11-A1A0-0030487CD840.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/8CAE3014-133C-DF11-A05D-000423D174FE.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/8C51BAC6-1A3C-DF11-A0EE-000423D94A04.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/8C042B04-2D3C-DF11-939F-0030487CD178.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/80471A6B-0E3C-DF11-8DCD-0030487C6A66.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/762824C3-0C3C-DF11-A4FD-0030487CD6D2.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/6A3533F5-103C-DF11-B3AA-00304879BAB2.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/4C8979D2-073C-DF11-B97B-000423D6AF24.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/26C8DED9-0E3C-DF11-9D83-0030487CD7B4.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/181C44F7-093C-DF11-A9CB-001D09F24FEC.root',
-'/store/data/Commissioning10/MinimumBias/RECO/v7/000/132/440/0AA7C390-0F3C-DF11-BD65-000423D998BA.root'
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/EEE6A6A0-4742-DF11-B29E-0019B9F72F97.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/EAB2FD5C-3A42-DF11-AE5F-000423D98804.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/EA9A1F00-4742-DF11-898A-001D09F25438.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/E093E3BA-4242-DF11-ABD8-0030487CD704.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/CE7C3100-4742-DF11-A410-001D09F24F1F.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/CE70DDD4-5E42-DF11-AED6-001D09F24448.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/CA0F3E00-4742-DF11-B993-001D09F252DA.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/C6F10ED6-4442-DF11-8E2A-0016177CA778.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/C4E0CBB7-3B42-DF11-BB57-000423D98FBC.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/C238AD9E-4042-DF11-BC5A-0030487CD178.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/BE486F9E-4042-DF11-80FD-001617C3B76E.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/BCBB11D6-4A42-DF11-A2F4-001D09F24489.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/B6A974E6-3F42-DF11-A8B1-0030487C8CBE.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/B00EBC9E-4042-DF11-9961-0030487C6A66.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/ACBE1B97-3C42-DF11-9CAB-000423D94534.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/A299B019-3B42-DF11-8079-001617E30F50.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/A0EFA323-4442-DF11-91F1-0030487CD7B4.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/967CB9A2-4042-DF11-95D2-001617C3B70E.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/94B61F24-4442-DF11-BE00-0030487CD812.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/8A431F24-4442-DF11-8D10-0030487CD77E.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/8A385724-4442-DF11-B326-0030487CD906.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/760D60DE-3D42-DF11-82A2-000423D99EEE.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/70884523-4442-DF11-80F9-001617C3B5D8.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/703AEB7D-3C42-DF11-BA8A-000423D987FC.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/668141EE-3842-DF11-BACA-0030487C8CBE.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/60662E79-3C42-DF11-A001-000423D98EC8.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/5AADE2E4-4442-DF11-9B0F-0030487CD178.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/4E89AE58-3A42-DF11-AB48-003048D2C092.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/4E484072-4342-DF11-9128-0030487CD76A.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/4AD6A4A2-4742-DF11-B95B-001D09F24691.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/4AC5E83B-3F42-DF11-AB77-0030487CF41E.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/469EA393-3E42-DF11-9FAE-000423DD2F34.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/3EF70B15-3B42-DF11-A9D7-000423D98AF0.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/3A910E07-4242-DF11-842C-0030487CD6DA.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/385854E5-4442-DF11-A8B9-0030487CD76A.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/361DB55A-6542-DF11-9FFE-0030487CD718.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/266D69ED-3842-DF11-8935-001D09F253FC.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/0E4D13B5-4A42-DF11-9D05-001D09F29597.root',
+'/store/data/Commissioning10/MinimumBias/RECO/v8/000/132/716/0E17871B-3D42-DF11-B3C7-001D09F2432B.root'
+
         ] );
 process.source.fileNames = readFiles
 
@@ -113,7 +133,7 @@ process.source.fileNames = readFiles
 process.p = cms.Path(
     process.hltLevel1GTSeed*
     process.scrapingVeto*
-    process.physDecl*
+    process.hltPhysicsDeclared*
     process.primaryVertexFilter*
     process.patDefaultSequence
     )
