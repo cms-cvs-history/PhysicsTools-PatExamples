@@ -40,7 +40,7 @@ public:
 
 
   // Here is where the selection occurs
-  virtual bool operator()( edm::EventBase const & event, std::strbitset & ret){
+  virtual bool operator()( edm::EventBase const & event, pat::strbitset & ret){
 
     ret.set(false);
 
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
   // Now get the W selector
   edm::ParameterSet wSelectorParams = fwliteParameters.getParameter<edm::ParameterSet>("wSelectorParams");
   WSelector wSelector( wSelectorParams );
-  std::strbitset wSelectorReturns = wSelector.getBitTemplate();
+  pat::strbitset wSelectorReturns = wSelector.getBitTemplate();
   
 
   // book a set of histograms
