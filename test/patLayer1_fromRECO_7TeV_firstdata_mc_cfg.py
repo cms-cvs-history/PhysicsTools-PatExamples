@@ -6,10 +6,7 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 from PhysicsTools.PatAlgos.tools.coreTools import *
 
 ## global tag for data
-process.GlobalTag.globaltag = cms.string('START3X_V25B::All')
-
-# turn off MC matching for the process
-#removeMCMatching(process, ['All'])
+process.GlobalTag.globaltag = cms.string('START36_V7::All')
 
 # add pf met
 from PhysicsTools.PatAlgos.tools.metTools import *
@@ -19,11 +16,11 @@ addPfMET(process, 'PF')
 
 # get the 900 GeV jet corrections
 from PhysicsTools.PatAlgos.tools.jetTools import *
-switchJECSet( process, "Summer09_7TeV_ReReco332")
+switchJECSet( process, "Spring10")
 
-# run ak5 gen jets
+# run ak5 gen jets and b-tagging sequences
 from PhysicsTools.PatAlgos.tools.cmsswVersionTools import *
-run33xOnReRecoMC( process, "ak5GenJets")
+run36xOn35xInput( process, "ak5GenJets")
 
 # Add PF jets
 addJetCollection(process,cms.InputTag('ak5PFJets'),
@@ -39,9 +36,9 @@ addJetCollection(process,cms.InputTag('ak5PFJets'),
                  )
 
 # require physics declared
-process.physDecl = cms.EDFilter("PhysDecl",
-    applyfilter = cms.untracked.bool(True)
-)
+process.load('HLTrigger.special.hltPhysicsDeclared_cfi')
+process.hltPhysicsDeclared.L1GtReadoutRecordTag = 'gtDigis'
+
 
 # require scraping filter
 process.scrapingVeto = cms.EDFilter("FilterOutScraping",
@@ -70,8 +67,8 @@ process.primaryVertexFilter = cms.EDFilter("GoodVertexFilter",
                                            )
 
 # Select jets
-process.selectedPatJets.cut = cms.string('pt > 2 & abs(eta) < 3.0')
-process.selectedPatJetsAK5PF.cut = cms.string('pt > 2 & abs(eta) < 3.0')
+process.selectedPatJets.cut = cms.string('pt > 10')
+process.selectedPatJetsAK5PF.cut = cms.string('pt > 10')
 
 
 # Add the files 
@@ -91,13 +88,14 @@ process.source.fileNames = readFiles
 process.p = cms.Path(
 #    process.hltLevel1GTSeed*
     process.scrapingVeto*
-#    process.physDecl*
+#    process.hltPhysicsDeclared*
     process.primaryVertexFilter*
     process.patDefaultSequence
     )
 
+
 # rename output file
-process.out.fileName = cms.untracked.string('reco_7TeV_firstdata_mc_356_pat.root')
+process.out.fileName = cms.untracked.string('reco_7TeV_firstdata_mc_361_pat.root')
 
 # reduce verbosity
 process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)

@@ -6,10 +6,7 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 from PhysicsTools.PatAlgos.tools.coreTools import *
 
 ## global tag for data
-process.GlobalTag.globaltag = cms.string('GR10_P_V2::All')
-
-# turn off MC matching for the process
-#removeMCMatching(process, ['All'])
+process.GlobalTag.globaltag = cms.string('GR_R_36X_V10::All')
 
 # add pf met
 from PhysicsTools.PatAlgos.tools.metTools import *
@@ -20,11 +17,11 @@ addPfMET(process, 'PF')
 
 # get the 900 GeV jet corrections
 from PhysicsTools.PatAlgos.tools.jetTools import *
-switchJECSet( process, "Summer09_7TeV_ReReco332")
+switchJECSet( process, "Spring10")
 
-# run ak5 gen jets
+# run b-tagging sequences
 from PhysicsTools.PatAlgos.tools.cmsswVersionTools import *
-#run33xOnReRecoMC( process, "ak5GenJets")
+run36xOn35xInput( process )
 
 # Add PF jets
 addJetCollection(process,cms.InputTag('ak5PFJets'),
@@ -70,8 +67,8 @@ process.primaryVertexFilter = cms.EDFilter("GoodVertexFilter",
                                            )
 
 # Select jets
-process.selectedPatJets.cut = cms.string('pt > 2 & abs(eta) < 3.0')
-process.selectedPatJetsAK5PF.cut = cms.string('pt > 2 & abs(eta) < 3.0')
+process.selectedPatJets.cut = cms.string('pt > 10')
+process.selectedPatJetsAK5PF.cut = cms.string('pt > 10')
 
 
 # Add the files 
@@ -122,6 +119,8 @@ readFiles.extend( [
         ] );
 process.source.fileNames = readFiles
 
+process.source.inputCommands = cms.untracked.vstring("keep *", "drop *_MEtoEDMConverter_*_*")
+
 # let it run
 
 #print
@@ -139,7 +138,7 @@ process.p = cms.Path(
     )
 
 # rename output file
-process.out.fileName = cms.untracked.string('reco_7TeV_firstdata_356_pat.root')
+process.out.fileName = cms.untracked.string('reco_7TeV_firstdata_361_pat.root')
 
 # reduce verbosity
 process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
