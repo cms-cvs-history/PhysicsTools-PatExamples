@@ -72,13 +72,6 @@ void PatTriggerTagAndProbe::analyze( const edm::Event & iEvent, const edm::Event
 	  histos1D_[ "probePt"  ]->Fill( candBaseRefProbe->pt () );
 	  histos1D_[ "probeEta" ]->Fill( candBaseRefProbe->eta() );
 	  if( trigRefProbe.isAvailable() ){
-
-	    std::cout << "TriggerObject ID : ";
-	    for(unsigned int idx=0; idx<trigRefProbe->filterIds().size(); ++idx){
-	      std::cout << " " << trigRefProbe->filterIds()[idx];
-	    }
-	    std::cout << std::endl;
-
 	    histos1D_[ "testPt" ]->Fill( candBaseRefProbe->pt () );
 	    histos1D_[ "testEta"]->Fill( candBaseRefProbe->eta() );
 	  }
