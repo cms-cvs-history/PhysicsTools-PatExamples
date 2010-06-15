@@ -10,9 +10,15 @@ process.p = cms.Path(
     process.patDefaultSequence
 )
 
-process.maxEvents.input     = 1000 # Reduce number of events for testing.
+process.maxEvents.input     = -1 # Reduce number of events for testing.
 process.out.fileName        = 'edmPatTrigger.root'
 process.options.wantSummary = False # to suppress the long output at the end of the job
+
+process.selectedPatMuons.cut ='isTrackerMuon=1 & isGlobalMuon()=1'
+                              'innerTrack.numberOfValidHits>=11 &'
+                              'globalTrack.normalizedChi2<10.0  &'
+                              'globalTrack.hitPattern.numberOfValidMuonHits>0 &'
+                              'abs(dB)<0.02 & (trackIso+caloIso)/pt<0.05'
 
 # PAT trigger
 process.load( "PhysicsTools.PatAlgos.triggerLayer1.triggerProducer_cff" )
