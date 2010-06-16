@@ -31,6 +31,9 @@ class PatTriggerTagAndProbe : public edm::EDAnalyzer {
   virtual void analyze( const edm::Event & iEvent, const edm::EventSetup & iSetup );
   /// everythin that needs to be done after the event loop
   virtual void endJob();
+
+  /// helper function to set proper bin errors
+  void setErrors(TH1D& h, const TH1D& ref);
   
   /// input for patTrigger
   edm::InputTag trigger_;

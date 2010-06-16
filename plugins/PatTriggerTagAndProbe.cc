@@ -27,12 +27,16 @@ void PatTriggerTagAndProbe::beginJob()
 {
   edm::Service< TFileService > fileService;
 
-  // mean pt for all trigger objects
-  histos1D_[ "mass"    ] = fileService->make< TH1D >( "mass"  , "Mass_{Z} (GeV)",  45,   30., 120.);
-  histos1D_[ "testPt"  ] = fileService->make< TH1D >( "testPt"  , "p_{T} (GeV)" ,  30,    0.,  30.);
-  histos1D_[ "probePt" ] = fileService->make< TH1D >( "probePt" , "p_{T} (GeV)" ,  30,    0.,  30.);
-  histos1D_[ "testEta" ] = fileService->make< TH1D >( "testEta" , "#eta"        ,  24,  -2.4,  2.4);
-  histos1D_[ "probeEta"] = fileService->make< TH1D >( "probeEta", "#eta"        ,  24,  -2.4,  2.4);
+  // mass plot around Z peak
+  histos1D_[ "mass"    ] = fileService->make< TH1D >( "mass"  , "Mass_{Z} (GeV)",  90,   30., 120.);
+  // pt for test candidate
+  histos1D_[ "testPt"  ] = fileService->make< TH1D >( "testPt"  , "p_{T} (GeV)" , 100,    0., 100.);
+  // pt for probe candidate
+  histos1D_[ "probePt" ] = fileService->make< TH1D >( "probePt" , "p_{T} (GeV)" , 100,    0., 100.);
+  // eta for test candidate
+  histos1D_[ "testEta" ] = fileService->make< TH1D >( "testEta" , "#eta"        ,  48,  -2.4,  2.4);
+  // eta for probe candidate
+  histos1D_[ "probeEta"] = fileService->make< TH1D >( "probeEta", "#eta"        ,  48,  -2.4,  2.4);
 }
 
 void PatTriggerTagAndProbe::analyze( const edm::Event & iEvent, const edm::EventSetup & iSetup )
@@ -49,12 +53,18 @@ void PatTriggerTagAndProbe::analyze( const edm::Event & iEvent, const edm::Event
   // trigger objects from patTrigger
   edm::Handle< pat::TriggerObjectCollection > triggerObjects;
   iEvent.getByLabel( trigger_, triggerObjects );
-  // PAT object collection
+  // pat candidate collection
   edm::Handle< pat::MuonCollection > muons;
   iEvent.getByLabel( muons_, muons );
 
-  // PAT trigger helper for trigger matching information
+  // pat trigger helper to recieve for trigger 
+  // matching information
   const pat::helper::TriggerMatchHelper matchHelper;
+
+  // ask for trigger accept of HLT_Mu9; otherwise we don't even start
+  if(!(triggerEvent->path("HLT_Mu9")->wasRun() && triggerEvent->path("HLT_Mu9")->wasAccept())){
+    return;
+  }
 
   // recieve the TriggerObjectMatch from the triggerEvent
   const pat::TriggerObjectMatch* triggerMatch( triggerEvent->triggerObjectMatchResult( muonMatch_ ) );
@@ -84,8 +94,19 @@ void PatTriggerTagAndProbe::analyze( const edm::Event & iEvent, const edm::Event
 void PatTriggerTagAndProbe::endJob()
 {
   // normalize the entries of the histograms
-  histos1D_[ "testPt"  ]->Divide(histos1D_[ "probePt"  ]);
-  histos1D_[ "testEta" ]->Divide(histos1D_[ "probeEta" ]);
+  histos1D_[ "testPt"  ]->Divide(histos1D_  [ "probePt"  ]);
+  setErrors(*histos1D_["testPt" ],*histos1D_[ "probePt"  ]);
+  histos1D_[ "testEta" ]->Divide(histos1D_  [ "probeEta" ]);
+  setErrors(*histos1D_["testEta"],*histos1D_[ "probeEta" ]);
+}
+
+void PatTriggerTagAndProbe::setErrors(TH1D& h, const TH1D& ref)
+{
+  for(int bin=0; bin<h.GetNbinsX(); ++bin){
+    if(ref.GetBinContent(bin+1)>0){
+      h.SetBinError(bin+1, sqrt((h.GetBinContent(bin+1)*(1.-h.GetBinContent(bin+1)))/ref.GetBinContent(bin+1)));
+    } else{ h.SetBinError(bin+1, 0.); }
+  }
 }
 
 
