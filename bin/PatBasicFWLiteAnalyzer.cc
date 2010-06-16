@@ -57,7 +57,6 @@ int main(int argc, char* argv[])
   TH1F* muonPhi_ = theDir.make<TH1F>("muonPhi","phi",   100, -5.,  5.);  
   
   // open input file (can be located on castor)
-  //TFile* inFile = TFile::Open( "file:patTuple.root" );
   TFile* inFile = TFile::Open(input_.c_str());
 
   // ----------------------------------------------------------------------
