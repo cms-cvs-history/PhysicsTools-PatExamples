@@ -13,5 +13,4 @@
 <use   name="PhysicsTools/FWLite"/>
 <environment>
   <bin   file="PatBasicFWLiteAnalyzer.cc"></bin>
-  <bin   file="PatBasicFWLiteAnalyzer_PyConfig.cc"></bin>
 </environment>
