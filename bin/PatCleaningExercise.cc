@@ -54,7 +54,7 @@ int main(int argc, char *argv[]){
     edm::EventBase const & event = ev;
 
     // simple event counter
-    if(iEvent>0 && iEvent%1==0){
+    if(iEvent>0 && iEvent%10==0){
       std::cout << "  processing event: " << iEvent << std::endl;
     }
 
