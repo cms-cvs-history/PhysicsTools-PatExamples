@@ -36,7 +36,7 @@ int main(int argc, char *argv[]){
 
   // book a set of histograms
   fwlite::TFileService fs = fwlite::TFileService("analyzePatBasics.root");
-  TFileDirectory theDir = fs.mkdir("analyzePatCleaning.root");
+  TFileDirectory theDir = fs.mkdir("analyzePatCleaning");
   TH1F* emfAllJets_    = theDir.make<TH1F>("emfAllJets"    , "f_{emf}(All Jets)"    ,  20,  0.,  1.);
   TH1F* emfCleanJets_  = theDir.make<TH1F>("emfCleanJets"  , "f_{emf}(Clean Jets)"  ,  20,  0.,  1.);
   TH1F* emfOverlapJets_= theDir.make<TH1F>("emfOverlapJets", "f_{emf}(Overlap Jets)",  20,  0.,  1.);
