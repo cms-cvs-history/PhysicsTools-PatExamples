@@ -71,33 +71,30 @@ PatMCMatching::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   iEvent.getByLabel(muonSrc_,muons);
 
   for(edm::View<pat::Muon>::const_iterator muon=muons->begin(); muon!=muons->end(); ++muon){
-  
-
-      if(muon->genParticleById(0,1).isNonnull() ){
-	  histContainer_["DR_status1Match"]->Fill( ROOT::Math::VectorUtil::DeltaR(muon->p4() , (muon->genParticleById(0,1) )->p4() ) ); 
-	  histContainer_["DPt_status1Match"]->Fill(muon->pt() - (muon->genParticleById(0,1) )->pt() );
-	    }
-      if(muon->genParticleById(0,3).isNonnull() ){
-	  histContainer_["DR_status3Match"]->Fill( ROOT::Math::VectorUtil::DeltaR(muon->p4() , (muon->genParticleById(0,3) )->p4() ) );
-	  histContainer_["DPt_status3Match"]->Fill(muon->pt() - (muon->genParticleById(0,3) )->pt() );
-      }
-      if(muon->genParticleById(0,-1).isNonnull() ){
-	  histContainer_["DR_defaultMatch"]->Fill( ROOT::Math::VectorUtil::DeltaR(muon->p4() , (muon->genParticleById(0,-1) )->p4() ) );
-	  histContainer_["DPt_defaultMatch"]->Fill(muon->pt() - (muon->genParticleById(0,-1) )->pt() );
-      }
-      if(muon->genParticleById(0,1).isNull() && muon->genParticleById(0,3).isNull() && muon->genParticleById(0,-1).isNull()) noMatch++;
-      if(muon->genParticleById(0,1).isNull() && muon->genParticleById(0,3).isNull() && muon->genParticleById(0,-1).isNonnull())decayInFlight++;
-
-
-  
-      if( muon->genParticleById(-13,0, 1).isNonnull() ){
-	  diffCharge++;
-	  std::cout<<" DIFF CHARGE!!! charge gen: "<< muon->genParticleById(-13,0, true)->charge()<< " charge reco: "<< muon->charge()<<std::endl;
-      }
-      numberMuons++;
-
+    if(muon->genParticleById(0,1).isNonnull() ){
+      histContainer_["DR_status1Match"]->Fill( ROOT::Math::VectorUtil::DeltaR(muon->p4() , (muon->genParticleById(0,1) )->p4() ) ); 
+      histContainer_["DPt_status1Match"]->Fill(muon->pt() - (muon->genParticleById(0,1) )->pt() );
+    }
+    if(muon->genParticleById(0,3).isNonnull() ){
+      histContainer_["DR_status3Match"]->Fill( ROOT::Math::VectorUtil::DeltaR(muon->p4() , (muon->genParticleById(0,3) )->p4() ) );
+      histContainer_["DPt_status3Match"]->Fill(muon->pt() - (muon->genParticleById(0,3) )->pt() );
+    }
+    if(muon->genParticleById(0,-1).isNonnull() ){
+      histContainer_["DR_defaultMatch"]->Fill( ROOT::Math::VectorUtil::DeltaR(muon->p4() , (muon->genParticleById(0,-1) )->p4() ) );
+      histContainer_["DPt_defaultMatch"]->Fill(muon->pt() - (muon->genParticleById(0,-1) )->pt() );
+    }
+    if(muon->genParticleById(0,1).isNull() && muon->genParticleById(0,3).isNull() && muon->genParticleById(0,-1).isNull()) noMatch++;
+    if(muon->genParticleById(0,1).isNull() && muon->genParticleById(0,3).isNull() && muon->genParticleById(0,-1).isNonnull())decayInFlight++;
+    
+    
+    
+    if( muon->genParticleById(-13,0, 1).isNonnull() ){
+      diffCharge++;
+      std::cout<<" DIFF CHARGE!!! charge gen: "<< muon->genParticleById(-13,0, true)->charge()<< " charge reco: "<< muon->charge()<<std::endl;
+    }
+    numberMuons++;  
   }
-
+  
 }
 
 void 
