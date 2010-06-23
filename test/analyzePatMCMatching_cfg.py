@@ -8,6 +8,9 @@ process = cms.Process("Test")
 
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
+## increase the number of events a bit
+process.maxEvents.input = 1000
+
 ## add inFlightMuons
 process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
 process.inFlightMuons = cms.EDProducer("PATGenCandsFromSimTracksProducer",

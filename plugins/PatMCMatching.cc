@@ -84,9 +84,9 @@ PatMCMatching::beginJob()
   edm::Service<TFileService> fs;
   
   // book histograms:
-  histContainer_["DR_defaultMatch"  ]=fs->make<TH1F>("DR_defaultMatch",   "DR_defaultMatch",     10, 0,  0.7);
-  histContainer_["DR_status1Match"  ]=fs->make<TH1F>("DR_status1Match",   "DR_status1Match",     10, 0,  0.7);
-  histContainer_["DR_status3Match"  ]=fs->make<TH1F>("DR_status3Match",   "DR_status3Match",     10, 0,  0.7);
+  histContainer_["DR_defaultMatch"  ]=fs->make<TH1F>("DR_defaultMatch",   "DR_defaultMatch", 100,  0.,  0.02);
+  histContainer_["DR_status1Match"  ]=fs->make<TH1F>("DR_status1Match",   "DR_status1Match", 100,  0.,  0.02);
+  histContainer_["DR_status3Match"  ]=fs->make<TH1F>("DR_status3Match",   "DR_status3Match", 100,  0.,  0.02);
 
 }
 
