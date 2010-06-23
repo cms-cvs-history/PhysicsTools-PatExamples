@@ -66,7 +66,7 @@ int main(int argc, char *argv[]){
     for( vector<pat::Jet>::const_iterator jet = jets->begin(); jet != jets->end(); jet++ ){
       if(jet->pt() > 20){
 	emfAllJets_->Fill( jet->emEnergyFraction() );
-	if(! jet->hasOverlaps(overlaps_)){
+	if(!jet->hasOverlaps(overlaps_)){
 	  emfCleanJets_->Fill( jet->emEnergyFraction() );
 	}
 	else{
@@ -78,7 +78,7 @@ int main(int argc, char *argv[]){
 	  for( reco::CandidatePtrVector::const_iterator overlap = overlaps.begin(); overlap != overlaps.end(); overlap++){ 
 	    float deltaR = reco::deltaR( (*overlap)->eta(), (*overlap)->phi(), jet->eta(), jet->phi() );
 	    deltaRElecJet_->Fill( deltaR );
-	    elecOverJet_->Fill( (*overlap)->energy(), jet->energy() );
+	    elecOverJet_->Fill( (*overlap)->energy()/jet->energy());
 	  }
 	}
       }
