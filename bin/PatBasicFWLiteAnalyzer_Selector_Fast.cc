@@ -19,8 +19,9 @@
 #include "FWCore/PythonParameterSet/interface/PythonProcessDesc.h"
 #include "FWCore/ParameterSet/interface/ProcessDesc.h"
 #include "PhysicsTools/SelectorUtils/interface/EventSelector.h"
-
 #include "TStopwatch.h"
+
+
 
 class WSelector : public EventSelector {
 public:
@@ -34,6 +35,9 @@ public:
     push_back("MET", metMin );
     set("Muon Pt");
     set("MET");
+
+    muonPtIndex_ = index_type(&bits_, std::string("Muon Pt") );
+    metIndex_    = index_type(&bits_, std::string("MET") );
 
     wMuon_ = 0;
     met_ = 0;
@@ -58,20 +62,20 @@ public:
     // get the MET, require to be > minimum
     if ( gotMET ) {
       met_ = &met->at(0);
-      if ( met_->pt() > cut("MET",   double()) || ignoreCut("MET") ) 
-	passCut(ret, "MET");
+      if ( met_->pt() > cut(metIndex_,   double()) || ignoreCut(metIndex_) ) 
+	passCut(ret, metIndex_);
     }
 
     // get the highest pt muon, require to have pt > minimum
     if ( gotMuons ) {
-      if ( !ignoreCut("Muon Pt") )  {
+      if ( !ignoreCut(muonPtIndex_) )  {
 	if ( muons->size() > 0 ) {
 	  wMuon_ = &muons->at(0);
-	  if ( wMuon_->pt() > cut("Muon Pt", double()) || ignoreCut("Muon Pt") ) 
-	    passCut(ret, "Muon Pt");
+	  if ( wMuon_->pt() > cut(muonPtIndex_, double()) || ignoreCut(muonPtIndex_) ) 
+	    passCut(ret, muonPtIndex_);
 	}
       } else {
-	passCut( ret, "Muon Pt");
+	passCut( ret, muonPtIndex_);
       }
     }
 
@@ -86,6 +90,9 @@ public:
 protected:
   edm::InputTag muonSrc_;
   edm::InputTag metSrc_;
+
+  index_type muonPtIndex_;
+  index_type metIndex_;
 
   pat::Muon const * wMuon_;
   pat::MET const *  met_;
@@ -139,16 +146,17 @@ int main(int argc, char* argv[])
   //  * after the loop close the input file
   // ----------------------------------------------------------------------
 
+  // loop the events
+  unsigned int iEvent=0;
+  fwlite::Event ev(inFile);
   TStopwatch timer;
   timer.Start();
 
   unsigned int nEventsAnalyzed = 0;
 
-  // loop the events
-  unsigned int iEvent=0;
-  fwlite::Event ev(inFile);
   for(ev.toBegin(); !ev.atEnd(); ++ev, ++iEvent){
     edm::EventBase const & event = ev;
+
     
     if ( wSelector(event, wSelectorReturns ) ) {
       
@@ -160,15 +168,13 @@ int main(int argc, char* argv[])
       muonPhi_->Fill( wMuon.phi() );
       
     } 
-
-
     ++nEventsAnalyzed;
+
   }  
+  timer.Stop();
+
   // close input file
   inFile->Close();
-
-
-  timer.Stop();
 
   // print selector
   wSelector.print(std::cout);
