@@ -37,6 +37,14 @@ public:
 
     wMuon_ = 0;
     met_ = 0;
+
+ 
+    if ( params.exists("cutsToIgnore") )
+      setIgnoredCuts( params.getParameter<std::vector<std::string> >("cutsToIgnore") );
+
+    retInternal_ = getBitTemplate();
+
+
   }
   virtual ~WSelector() {}
 
