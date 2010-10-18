@@ -2,9 +2,13 @@ import FWCore.ParameterSet.Config as cms
 
 process = cms.Process("FWLitePlots")
 
-process.FWLiteParams = cms.PSet(
-    inputFile   = cms.string('file:patTuple.root'),
-    outputFile  = cms.string('analyzePatBasics.root'),
+process.MuonAnalyzer = cms.PSet(
+    ## common input for wrapped analyzers
+    fileNames   = cms.vstring('file:patTuple.root'),  ## mandatory
+    outputFile  = cms.string('analyzePatBasics.root'),## mandatory
+    maxEvents   = cms.int32(-1),                      ## optional
+    reportAfter = cms.uint32(10),                     ## optional
+    ## input specific for this analyzer
     muons = cms.InputTag('cleanPatMuons')
 )
 
