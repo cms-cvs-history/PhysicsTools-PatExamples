@@ -7,7 +7,7 @@ process.MuonAnalyzer = cms.PSet(
     fileNames   = cms.vstring('file:patTuple.root'),  ## mandatory
     outputFile  = cms.string('analyzePatBasics.root'),## mandatory
     maxEvents   = cms.int32(-1),                      ## optional
-    reportAfter = cms.uint32(10),                     ## optional
+    outputEvery = cms.uint32(10),                     ## optional
     ## input specific for this analyzer
     muons = cms.InputTag('cleanPatMuons')
 )
