@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-process = cms.Process("FWLitePlots")
+process = cms.PSet()
 
 process.fwliteInput = cms.PSet(
     fileNames   = cms.vstring(['file:patTuple.root']),  ## mandatory
@@ -9,10 +9,10 @@ process.fwliteInput = cms.PSet(
     )
 
 process.fwliteOutput = cms.PSet(
-    fileName  = cms.string('analyzePatBasics.root') ## mandatory
+    fileName  = cms.string('analyzePatBasics_fwlite.root') ## mandatory
     )
 
-process.MuonAnalyzer = cms.PSet(
+process.muonAnalyzer = cms.PSet(
     muons = cms.InputTag('cleanPatMuons')
 )
 
