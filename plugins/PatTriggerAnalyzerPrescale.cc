@@ -16,11 +16,11 @@ class PatTriggerAnalyzerPrescale : public edm::EDAnalyzer {
   ~PatTriggerAnalyzerPrescale(){};
 
  private:
-  /// everythin that needs to be done before the event loop
+  /// everything that needs to be done before the event loop
   virtual void beginJob();
-  /// everythin that needs to be done during the event loop
+  /// everything that needs to be done during the event loop
   virtual void analyze( const edm::Event & iEvent, const edm::EventSetup & iSetup );
-  /// everythin that needs to be done after the event loop
+  /// everything that needs to be done after the event loop
   virtual void endJob(){};
 
   /// histogram
@@ -38,7 +38,6 @@ class PatTriggerAnalyzerPrescale : public edm::EDAnalyzer {
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
 #include "DataFormats/PatCandidates/interface/TriggerEvent.h"
-#include <iostream>
 
 
 using namespace pat;
@@ -56,9 +55,6 @@ void PatTriggerAnalyzerPrescale::beginJob()
 
   // Histogram definition for 100 events on the x-axis
   histo_ = fileService->make< TH1D >( "histo_", std::string( "Prescale values of " + pathName_ ).c_str(), 100, 0., 100.);
-  histo_->SetXTitle( "event" );
-  histo_->SetYTitle( "prescale" );
-  histo_->SetMinimum( 0. );
 }
 
 void PatTriggerAnalyzerPrescale::analyze( const edm::Event & iEvent, const edm::EventSetup & iSetup )
@@ -66,13 +62,6 @@ void PatTriggerAnalyzerPrescale::analyze( const edm::Event & iEvent, const edm::
   // PAT trigger event
   edm::Handle< TriggerEvent > triggerEvent;
   iEvent.getByLabel( "patTriggerEvent", triggerEvent );
-
-  // Get the HLT path
-  const TriggerPath * path( triggerEvent->path( pathName_ ) );
-
-  // Fill prescale factor into histogram
-  ++bin_;
-  if ( path ) histo_->SetBinContent( bin_, path->prescale() );
 }
 
 
