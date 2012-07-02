@@ -161,11 +161,6 @@ void PatTriggerAnalyzer::analyze( const edm::Event & iEvent, const edm::EventSet
   // a look to DataFormats/HLTReco/interface/TriggerTypeDefs.h to
   // know more about the available trrigger object id's
   for ( unsigned id=minID_; id<=maxID_; ++id ) {
-    // vector of all objects for a given object id
-    const TriggerObjectRefVector objRefs( triggerEvent->objects( id ) );
-    // buffer the number of objects
-    sumN_[ id ] += objRefs.size();
-    // iterate the objects and buffer the pt of the objects
   }
 }
 
