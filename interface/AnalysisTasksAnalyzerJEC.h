@@ -36,7 +36,7 @@ class AnalysisTasksAnalyzerJEC : public edm::BasicAnalyzer {
   std::string jecLevel_;
   std::string patJetCorrFactors_;
   bool help_;
-  uint jetInEvents_;
+  unsigned int jetInEvents_;
   /// histograms
   std::map<std::string, TH2*> hists_;
 };
